@@ -1,0 +1,5 @@
+{
+    "AttackWait": "idle",
+    "AttackWalk": "move",
+    "AttackEscape": "escape"
+}
