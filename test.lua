@@ -36,6 +36,13 @@ end,
 function(retval) end
 )
 
+----------------
+
+-- longxinag: 
+-- 		kijin: 3316282274, 2399642468
+-- 		normal: 3783600746, 3862130673
+
+----------------
 
 ---- Check Player current Status
 -- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
@@ -101,7 +108,7 @@ function(retval) end
 -- )
 
 ---- Hook player info
-local playerInputHook = playerInputHook or sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
+local playerInputHook = sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
 sdk.hook(playerInputHook,
 function(args)
 	playerManager = playerManager or sdk.get_managed_singleton("snow.player.PlayerManager")

@@ -1,15 +1,13 @@
 local masterPlayerIndex
 local masterPlayer
-local PlayerManager
-local action_id
-local last_id
-local userArmature
-local nodeID, last_nodeID
+local nodeID
 local dodgeReady = true
 local jumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Jump"):get_data(nil)
 local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
+local masterPlayerBehaviorTree
+local dmgOwnerType, curPlayerIndex
 local dodgeAction
 local shroudedVaultLock = false
 local dodgeActionNodeID = {
@@ -59,7 +57,7 @@ function(args)
 	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
     state = masterPlayer:call("get_DBState")
-	kijinState = masterPlayer:call("isKijinKyouka")
+	local kijinState = masterPlayer:call("isKijinKyouka")
 	if kijinState then
 		dodgeAction = dodgeActionNodeID["kijin_kyouka"]
 	elseif state == kijin then
@@ -102,16 +100,16 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 )
 
 ---- Hook player info
-local playerInputHook = playerInputHook or sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
+local playerInputHook = sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
 sdk.hook(playerInputHook,
 function(args)
-	playerManager = playerManager or sdk.get_managed_singleton("snow.player.PlayerManager")
+	local playerManager = playerManager or sdk.get_managed_singleton("snow.player.PlayerManager")
 	masterPlayer = playerManager:call("findMasterPlayer") -- snow.player.PlayerBase
 	if not masterPlayer then return end
 	masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
-	masterPlayerArmature = masterPlayer:getMotionFsm2() -- via.motion.MotionFsm2
+	local masterPlayerArmature = masterPlayer:getMotionFsm2() -- via.motion.MotionFsm2
 	nodeID = masterPlayerArmature:getCurrentNodeID(0) -- System.UInt64
-    masterPlayerGameObject = masterPlayer:call("get_GameObject") -- via.GameObject
+    local masterPlayerGameObject = masterPlayer:call("get_GameObject") -- via.GameObject
 	masterPlayerBehaviorTree = masterPlayerGameObject:call("getComponent(System.Type)",sdk.typeof("via.behaviortree.BehaviorTree"))
 end,
 function(retval) return retval end
