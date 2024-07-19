@@ -9,7 +9,7 @@ local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_fie
 local masterPlayerBehaviorTree
 local dmgOwnerType, curPlayerIndex
 local dodgeAction
-local shroudedVaultLock = false
+local dodgeLock = false
 local dodgeActionNodeID = {
     ["normal"] = 1731229352,
     ["kijin_kyouka"] = 1902167730,
@@ -32,9 +32,9 @@ function(args)
 
     ---- check shroudedVault
     if nodeID == 3316282274 or nodeID == 3783600746 then
-        shroudedVaultLock = true
+        dodgeLock = true
     elseif nodeID ~= 2399642468 and nodeID ~= 3862130673 then
-        shroudedVaultLock = false
+        dodgeLock = false
     end
 	
     
@@ -44,7 +44,7 @@ function(args)
 	elseif (isJump or isWireJump or isEscape or isDamage) then
 		dodgeReady = false
 		return
-    elseif shroudedVaultLock then
+    elseif dodgeLock then
         dodgeReady = false
         return
 	end
