@@ -1,13 +1,30 @@
 local actionMove = {}
 
 function actionMove.init()
+    actionMove.weaponType = {
+        [0] = "greatSword",
+        [1] = "slashAxe", -- aka switch axe
+        [2] = "longSword",
+        [3] = "lightBowGun",
+        [4] = "heavyBowGun",
+        [5] = "hammer",
+        [6] = "gunLance",
+        [7] = "lance",
+        [8] = "shortSword", -- aka sword & shield
+        [9] = "dualBlades",
+        [10] = "horn", -- aka hunting horn
+        [11] = "chargeAxe",
+        [12] = "insectGlaive",
+        [13] = "bow"
+    }
+
     actionMove.dodgeMove = {
         ["dualBlades"] = {
             ["normal"] = 1731229352,
             ["kijin_kyouka"] = 1902167730,
             ["kijin"] = 2454049754
         },
-        ["huntingHorn"] = {
+        ["horn"] = {
             ["normal"] = 1731229352
         }
     }
@@ -21,8 +38,8 @@ function actionMove.init()
 
     actionMove.dodgeUnlockMove = {
         ["dualBlades"] = {
-            [2399642468] = true,
-            [3862130673] = true
+            [2399642468] = true,  -- vault shroud kijin end
+            [3862130673] = true -- vault shourld kijin_kyouka, normal end
         }
     }
 

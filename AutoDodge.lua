@@ -10,11 +10,7 @@ local masterPlayerBehaviorTree
 local dmgOwnerType, curPlayerIndex
 local dodgeAction
 local dodgeLock = false
--- local dodgeActionNodeID = {
---     ["normal"] = 1731229352,
---     ["kijin_kyouka"] = 1902167730,
---     ["kijin"] = 2454049754
--- }
+local weaponType
 
 local actionMove = require("weaponData.ActionMove")
 actionMove.init()
@@ -33,17 +29,10 @@ function(args)
 	---- check is weapon drawn
 	local weaponOn = masterPlayer:call("isWeaponOn")
 
-    -- ---- check shroudedVault
-    -- if nodeID == 3316282274 or nodeID == 3783600746 then
-    --     dodgeLock = true
-    -- elseif nodeID ~= 2399642468 and nodeID ~= 3862130673 then
-    --     dodgeLock = false 
-    -- end
-
 	-- check dodgeLock
-	if actionMove.dodgeLockMove["dualBlades"][nodeID] then
+	if actionMove.dodgeLockMove[weaponType][nodeID] then
 		dodgeLock = true
-	elseif not actionMove.dodgeUnlockMove["dualBlades"][nodeID] then
+	elseif not actionMove.dodgeUnlockMove[weaponType][nodeID] then
 		dodgeLock = false
 	end
 	
@@ -61,26 +50,9 @@ function(args)
 
     dodgeReady = true
 
-	local dodgeActionFunc = actionMove.getDodgeMoveFuncs["dualBlades"]
+	local dodgeActionFunc = actionMove.getDodgeMoveFuncs[weaponType]
 
 	dodgeAction = dodgeActionFunc(masterPlayer)
-
-    -- local normal
-	-- local kijin
-    -- local state
-	-- normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
-	-- kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
-    -- state = masterPlayer:call("get_DBState")
-	-- local kijinState = masterPlayer:call("isKijinKyouka")
-	-- if kijinState then
-	-- 	dodgeAction = dodgeActionNodeID["kijin_kyouka"]
-	-- elseif state == kijin then
-	-- 	dodgeAction = dodgeActionNodeID["kijin"]
-	-- elseif state == normal then
-	-- 	dodgeAction = dodgeActionNodeID["normal"]
-	-- else
-	-- 	dodgeAction = dodgeActionNodeID["normal"]
-	-- end
     
 
 end,
@@ -125,6 +97,7 @@ function(args)
 	nodeID = masterPlayerArmature:getCurrentNodeID(0) -- System.UInt64
     local masterPlayerGameObject = masterPlayer:call("get_GameObject") -- via.GameObject
 	masterPlayerBehaviorTree = masterPlayerGameObject:call("getComponent(System.Type)",sdk.typeof("via.behaviortree.BehaviorTree"))
+	weaponType = actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]
 end,
 function(retval) return retval end
 )
