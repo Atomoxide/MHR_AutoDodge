@@ -19,7 +19,7 @@ or
 
 https://github.com/praydog/REFramework
 
-2. Unzip release file and use REFramework to load AutoDodge.lua script.
+2. Download script <a href="https://github.com/Atomoxide/MHR_AutoDodge/releases">here</a> and unzip release file and use REFramework to load AutoDodge.lua script.
 
 
 ## Supported Weapon
