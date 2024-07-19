@@ -11,6 +11,8 @@ local dmgOwnerType, curPlayerIndex
 local dodgeAction
 local dodgeLock = false
 local weaponType
+local dodgeActionFunc
+local trackActionFunc
 
 local actionMove = require("weaponData.ActionMove")
 actionMove.init()
@@ -32,28 +34,31 @@ function(args)
 	-- check dodgeLock
 	if actionMove.dodgeLockMove[weaponType][nodeID] then
 		dodgeLock = true
-	elseif not actionMove.dodgeUnlockMove[weaponType][nodeID] then
+	elseif not actionMove.dodgeKeepLockMove[weaponType][nodeID] then
 		dodgeLock = false
 	end
 	
     
-    if not weaponOn then
+    if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
 		dodgeReady = false
 		return
 	elseif (isJump or isWireJump or isEscape or isDamage) then
 		dodgeReady = false
 		return
     elseif dodgeLock then
+		-- log.debug("dodge locked")
         dodgeReady = false
         return
 	end
 
     dodgeReady = true
-
-	local dodgeActionFunc = actionMove.getDodgeMoveFuncs[weaponType]
-
+	
+	if trackActionFunc ~= nil then
+		trackActionFunc(nodeID)
+	end
+	
 	dodgeAction = dodgeActionFunc(masterPlayer)
-    
+    -- log.debug(dodgeAction)
 
 end,
 function(retval) return retval end
@@ -98,6 +103,8 @@ function(args)
     local masterPlayerGameObject = masterPlayer:call("get_GameObject") -- via.GameObject
 	masterPlayerBehaviorTree = masterPlayerGameObject:call("getComponent(System.Type)",sdk.typeof("via.behaviortree.BehaviorTree"))
 	weaponType = actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]
+	dodgeActionFunc = actionMove.getDodgeMoveFuncs[weaponType]
+	trackActionFunc = actionMove.getTrackActionFuncs[weaponType]
 end,
 function(retval) return retval end
 )

@@ -11,7 +11,7 @@ local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_f
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
 
----- show action node id
+-- show action node id
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 function(args)
 	-- local motionControl = sdk.to_managed_object(args[2])
@@ -42,7 +42,7 @@ function(retval) end
 
 ----------------
 
----- Check Player current Status
+-- Check Player current Status
 -- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 -- function(args)
 -- 	if not masterPlayer then return end
@@ -110,6 +110,12 @@ function(retval) end
 	-- else
 	-- 	log.debug("Unknown")
 	-- end
+
+-- 	local lbgState
+-- 	-- local turnAble = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Turnable"):get_data(nil)
+--     lbgState = masterPlayer:get_field("_IsIaiCounter")
+	
+-- 	log.debug(tostring(lbgState))
 	
 -- end,
 -- function(retval) return retval end
@@ -141,3 +147,11 @@ function(retval) return retval end
 -- 	nodeID = userArmature:getCurrentNodeID(0)
 	
 -- end)
+
+-- re.on_frame(
+-- 	function ()
+-- 		local lbgState
+-- 		lbgState = masterPlayer:call("get_IsIaiCounter")
+-- 		log.debug(tostring(lbgState))
+-- 	end
+-- )

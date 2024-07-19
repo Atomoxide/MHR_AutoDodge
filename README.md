@@ -1,14 +1,31 @@
 # MHR_AutoDodge
+
 a Monster Hunter Rise mod to perform auto dodge (escape move) on attack
 
-## Installation
+## Feature
 
-TODO
+* auto dodge to evade monster attack
+* auto release of Iai when using long sword
+
+## warning
+
+## Installation and Usage
+
+1. Install REFramework:
+
+https://www.nexusmods.com/monsterhunterrise/mods/26
+
+or 
+
+https://github.com/praydog/REFramework
+
+2. Unzip release file and use REFramework to load AutoDodge.lua script.
+
 
 ## Supported Weapon
 
 - [ ] Great Sword
-- [ ] Long Sword
+- [x] Long Sword
 - [ ] Sword & Shield
 - [x] Dual Blades
 - [ ] Lance
@@ -18,7 +35,7 @@ TODO
 - [ ] Switch Axe
 - [ ] Charge Blade
 - [ ] Insect Glaive
-- [ ] Light Bowgun
+- [x] Light Bowgun
 - [ ] Heavy Bowgun
 - [ ] Bow
 
