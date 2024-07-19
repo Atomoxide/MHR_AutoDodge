@@ -10,11 +10,14 @@ local masterPlayerBehaviorTree
 local dmgOwnerType, curPlayerIndex
 local dodgeAction
 local dodgeLock = false
-local dodgeActionNodeID = {
-    ["normal"] = 1731229352,
-    ["kijin_kyouka"] = 1902167730,
-    ["kijin"] = 2454049754
-}
+-- local dodgeActionNodeID = {
+--     ["normal"] = 1731229352,
+--     ["kijin_kyouka"] = 1902167730,
+--     ["kijin"] = 2454049754
+-- }
+
+local actionMove = require("weaponData.ActionMove")
+actionMove.init()
 
 ---- Check Player current Status
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
@@ -30,12 +33,19 @@ function(args)
 	---- check is weapon drawn
 	local weaponOn = masterPlayer:call("isWeaponOn")
 
-    ---- check shroudedVault
-    if nodeID == 3316282274 or nodeID == 3783600746 then
-        dodgeLock = true
-    elseif nodeID ~= 2399642468 and nodeID ~= 3862130673 then
-        dodgeLock = false
-    end
+    -- ---- check shroudedVault
+    -- if nodeID == 3316282274 or nodeID == 3783600746 then
+    --     dodgeLock = true
+    -- elseif nodeID ~= 2399642468 and nodeID ~= 3862130673 then
+    --     dodgeLock = false 
+    -- end
+
+	-- check dodgeLock
+	if actionMove.dodgeLockMove["dualBlades"][nodeID] then
+		dodgeLock = true
+	elseif not actionMove.dodgeUnlockMove["dualBlades"][nodeID] then
+		dodgeLock = false
+	end
 	
     
     if not weaponOn then
@@ -51,22 +61,26 @@ function(args)
 
     dodgeReady = true
 
-    local normal
-	local kijin
-    local state
-	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
-	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
-    state = masterPlayer:call("get_DBState")
-	local kijinState = masterPlayer:call("isKijinKyouka")
-	if kijinState then
-		dodgeAction = dodgeActionNodeID["kijin_kyouka"]
-	elseif state == kijin then
-		dodgeAction = dodgeActionNodeID["kijin"]
-	elseif state == normal then
-		dodgeAction = dodgeActionNodeID["normal"]
-	else
-		dodgeAction = dodgeActionNodeID["normal"]
-	end
+	local dodgeActionFunc = actionMove.getDodgeMoveFuncs["dualBlades"]
+
+	dodgeAction = dodgeActionFunc(masterPlayer)
+
+    -- local normal
+	-- local kijin
+    -- local state
+	-- normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
+	-- kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
+    -- state = masterPlayer:call("get_DBState")
+	-- local kijinState = masterPlayer:call("isKijinKyouka")
+	-- if kijinState then
+	-- 	dodgeAction = dodgeActionNodeID["kijin_kyouka"]
+	-- elseif state == kijin then
+	-- 	dodgeAction = dodgeActionNodeID["kijin"]
+	-- elseif state == normal then
+	-- 	dodgeAction = dodgeActionNodeID["normal"]
+	-- else
+	-- 	dodgeAction = dodgeActionNodeID["normal"]
+	-- end
     
 
 end,

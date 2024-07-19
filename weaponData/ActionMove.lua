@@ -1,35 +1,37 @@
+local actionMove = {}
 
-
-local dodgeMove = {
-    ["dualBlades"] = {
-        ["normal"] = 1731229352,
-        ["kijin_kyouka"] = 1902167730,
-        ["kijin"] = 2454049754
-    },
-    ["huntingHorn"] = {
-        ["normal"] = 1731229352
+function actionMove.init()
+    actionMove.dodgeMove = {
+        ["dualBlades"] = {
+            ["normal"] = 1731229352,
+            ["kijin_kyouka"] = 1902167730,
+            ["kijin"] = 2454049754
+        },
+        ["huntingHorn"] = {
+            ["normal"] = 1731229352
+        }
     }
-}
 
-local dodgeLockMove = {
-    ["dulaBlades"] = {
-        [3316282274] = true, -- vault shroud kijin
-        [3783600746] = true -- vault shourld kijin_kyouka, normal
+    actionMove.dodgeLockMove = {
+        ["dualBlades"] = {
+            [3316282274] = true, -- vault shroud kijin
+            [3783600746] = true -- vault shourld kijin_kyouka, normal
+        }
     }
-}
 
-local dodgeUnlockMove = {
-    ["dualBlades"] = {
-        [2399642468] = true,
-        [3862130673] = true
+    actionMove.dodgeUnlockMove = {
+        ["dualBlades"] = {
+            [2399642468] = true,
+            [3862130673] = true
+        }
     }
-}
 
-local getDodgeMoveFuncs = {
-    ["dualBlades"] = GetDualBladesDodgeMove
-}
+    actionMove.getDodgeMoveFuncs = {
+        ["dualBlades"] = actionMove.GetDualBladesDodgeMove
+    }
+end
 
-function GetDualBladesDodgeMove (masterPlayer)
+function actionMove.GetDualBladesDodgeMove (masterPlayer)
     local normal
 	local kijin
     local state
@@ -38,12 +40,14 @@ function GetDualBladesDodgeMove (masterPlayer)
     state = masterPlayer:call("get_DBState")
 	local kijinState = masterPlayer:call("isKijinKyouka")
 	if kijinState then
-		return dodgeMove["dulaBlades"]["kijin_kyouka"]
+		return actionMove.dodgeMove["dualBlades"]["kijin_kyouka"]
 	elseif state == kijin then
-		return dodgeMove["dulaBlades"]["kijin"]
+		return actionMove.dodgeMove["dualBlades"]["kijin"]
 	elseif state == normal then
-		return dodgeMove["dulaBlades"]["normal"]
+		return actionMove.dodgeMove["dualBlades"]["normal"]
 	else
-		return dodgeMove["dulaBlades"]["normal"]
+		return actionMove.dodgeMove["dualBlades"]["normal"]
 	end
 end
+
+return actionMove
