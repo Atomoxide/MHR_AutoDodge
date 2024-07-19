@@ -11,21 +11,21 @@ local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_f
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
 
-
+---- show action node id
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 function(args)
-	local motionControl = sdk.to_managed_object(args[2])
-	local refPlayerBase = motionControl:get_field("_RefPlayerBase")
-	local curPlayerIndex = refPlayerBase:get_field("_PlayerIndex")
+	-- local motionControl = sdk.to_managed_object(args[2])
+	-- local refPlayerBase = motionControl:get_field("_RefPlayerBase")
+	-- local curPlayerIndex = refPlayerBase:get_field("_PlayerIndex")
 	
-	if curPlayerIndex == masterPlayerIndex then
-		action_id = motionControl:get_field("_OldMotionID")
-		-- action_bank_id = motionControl:get_field("_OldBankID")
-	end
-	if action_id ~= last_id then
-        -- log.debug("action" .. tostring(action_id))
-        last_id = action_id
-    end
+	-- if curPlayerIndex == masterPlayerIndex then
+	-- 	action_id = motionControl:get_field("_OldMotionID")
+	-- 	-- action_bank_id = motionControl:get_field("_OldBankID")
+	-- end
+	-- if action_id ~= last_id then
+    --     -- log.debug("action" .. tostring(action_id))
+    --     last_id = action_id
+    -- end
 	
 	if nodeID ~= last_nodeID then
 		log.debug("node: " .. tostring(nodeID))
@@ -38,9 +38,7 @@ function(retval) end
 
 ----------------
 
--- longxinag: 
--- 		kijin: 3316282274, 2399642468
--- 		normal: 3783600746, 3862130673
+
 
 ----------------
 
@@ -58,50 +56,60 @@ function(retval) end
 
 -- 	local isJump = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", jumpStateTag)
 -- 	local isWireJump = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", wireJumpStateTag)
--- 	local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
+	-- local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
 -- 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
+
+-- if isEscape then
+-- 	log.debug("escape")
+-- else
+-- 	log.debug("no")
+-- end
 
 -- 	if isJump or isWireJump or isEscape or isDamage then
 -- 		dodgeReady = false
 -- 		return
 -- 	end
 
--- 	local stateTag
--- 	local isInState
--- 	-- local state
--- 	-- local kijinState
+	-- local stateTag
+	-- local isInState
+	-- local state
+	-- local kijinState
 
 -- 	---- check snow.player.ActionNoAttack
 -- 	-- stateTag = sdk.find_type_definition("snow.player.ActionNoAttack"):get_field("Attack000"):get_data(nil)
 -- 	-- isInState = masterPlayer:call("isActionNoAttackTag(snow.player.ActionNoAttack)", stateTag)
 
 -- 	---- check snow.player.ActStatus
--- 	stateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
--- 	isInState = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", stateTag)
+	-- stateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
+	-- isInState = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", stateTag)
 
 	
 
--- 	-- isInState = masterPlayer:call("checkWeaponDraw(System.Boolean)", true)
--- 	-- state = masterPlayer:call("get_DBState")
--- 	-- kijinState = masterPlayer:call("isKijinKyouka")
--- 	if isInState then
--- 		log.debug("in state")
--- 	else
--- 		log.debug("nope")
--- 	end
--- 	-- local normal
--- 	-- local kijin
--- 	-- normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
--- 	-- kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
--- 	-- if kijinState then
--- 	-- 	log.debug("kijin kyouka")
--- 	-- elseif state == kijin then
--- 	-- 	log.debug("kijin")
--- 	-- elseif state == normal then
--- 	-- 	log.debug("normal")
--- 	-- else
--- 	-- 	log.debug("Unknown")
--- 	-- end
+	-- isInState = masterPlayer:call("checkWeaponDraw(System.Boolean)", true)
+	-- state = masterPlayer:call("get_DBState")
+	-- kijinState = masterPlayer:call("isKijinKyouka")
+	-- if isInState then
+	-- 	log.debug("in state")
+	-- else
+	-- 	log.debug("nope")
+	-- end
+	-- local normal
+	-- local kijin
+	-- local kijinJyuu
+	-- normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
+	-- kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
+	-- kijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
+	-- if kijinState then
+	-- 	log.debug("kijin kyouka")
+	-- elseif state == kijin then
+	-- 	log.debug("kijin")
+	-- elseif state == kijinJyuu then
+	-- 	log.debug("kijin jyuu")
+	-- elseif state == normal then
+	-- 	log.debug("normal")
+	-- else
+	-- 	log.debug("Unknown")
+	-- end
 	
 -- end,
 -- function(retval) return retval end

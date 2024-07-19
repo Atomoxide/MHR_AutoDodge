@@ -22,7 +22,8 @@ function actionMove.init()
         ["dualBlades"] = {
             ["normal"] = 1731229352,
             ["kijin_kyouka"] = 1902167730,
-            ["kijin"] = 2454049754
+            ["kijin"] = 2454049754,
+            ["kijin_jyuu"] = 1540831430
         },
         ["horn"] = {
             ["normal"] = 1731229352
@@ -38,8 +39,8 @@ function actionMove.init()
 
     actionMove.dodgeUnlockMove = {
         ["dualBlades"] = {
-            [2399642468] = true,  -- vault shroud kijin end
-            [3862130673] = true -- vault shourld kijin_kyouka, normal end
+            [2399642468] = true,  -- vault shroud kijin, kijin_jyuu activated
+            [3862130673] = true -- vault shourld kijin_kyouka, normal activated
         }
     }
 
@@ -51,15 +52,19 @@ end
 function actionMove.GetDualBladesDodgeMove (masterPlayer)
     local normal
 	local kijin
+    local kijinJyuu
     local state
 	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
+    kijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
     state = masterPlayer:call("get_DBState")
 	local kijinState = masterPlayer:call("isKijinKyouka")
 	if kijinState then
 		return actionMove.dodgeMove["dualBlades"]["kijin_kyouka"]
 	elseif state == kijin then
 		return actionMove.dodgeMove["dualBlades"]["kijin"]
+    elseif state == kijinJyuu then
+		return actionMove.dodgeMove["dualBlades"]["kijin_jyuu"]
 	elseif state == normal then
 		return actionMove.dodgeMove["dualBlades"]["normal"]
 	else
