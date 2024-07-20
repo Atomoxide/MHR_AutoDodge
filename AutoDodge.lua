@@ -40,7 +40,8 @@ function(args)
 	
     
     if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
-		dodgeReady = false
+		dodgeReady = true
+		dodgeAction = actionMove.dodgeMove["weaponOff"]
 		return
 	elseif (isJump or isWireJump or isEscape or isDamage) then
 		dodgeReady = false

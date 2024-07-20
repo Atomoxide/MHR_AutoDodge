@@ -19,6 +19,7 @@ function actionMove.init()
     }
 
     actionMove.dodgeMove = {
+        ["weaponOff"] = 1505041940,
         ["longSword"] = {
             ["normal"] = 1731229352,
             ["iai"] = 662313942
@@ -27,7 +28,11 @@ function actionMove.init()
             ["normal"] = 1731229352,
             ["kijin_kyouka"] = 1902167730,
             ["kijin"] = 2454049754,
-            ["kijin_jyuu"] = 1540831430
+            ["kijin_jyuu"] = 1540831430,
+            ["normal_vault"] = 3783600746,
+            ["kijin_kyouka_vault"] = 3783600746,
+            ["kijin_vault"] = 3316282274,
+            ["kijin_jyuu_vault"] = 3316282274
         },
         ["horn"] = {
             ["normal"] = 1731229352

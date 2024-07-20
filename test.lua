@@ -10,6 +10,42 @@ local jumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field
 local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
+local dmgOwnerType, curPlayerIndex
+
+---- Hook player info
+local playerInputHook = sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
+sdk.hook(playerInputHook,
+function(args)
+	playerManager = playerManager or sdk.get_managed_singleton("snow.player.PlayerManager")
+	masterPlayer = playerManager:call("findMasterPlayer") -- snow.player.PlayerBase
+	if not masterPlayer then return end
+	masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
+	userArmature = masterPlayer:getMotionFsm2() -- via.motion.MotionFsm2
+	nodeID = userArmature:getCurrentNodeID(0) -- System.UInt64
+end,
+function(retval) return retval end
+)
+
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("checkCalcDamage_DamageSide"),
+-- 	function(args)
+-- 		local manager = sdk.to_managed_object(args[2])	
+-- 		local argManager = sdk.to_managed_object(args[3])
+-- 		local damageData = argManager:call("get_AttackData")
+		
+-- 		dmgOwnerType = damageData:call("get_OwnerType")
+-- 		curPlayerIndex = manager:get_field("_PlayerIndex")
+-- 		masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
+--         -- log.debug("Damage detected")
+-- 	end,
+--     function(retval)
+-- 		local dmgFlowType = sdk.to_int64(retval)
+-- 		-- if curPlayerIndex == masterPlayerIndex and dmgOwnerType == 1 and dmgFlowType == 0 then
+-- 		if curPlayerIndex == masterPlayerIndex then
+-- 			log.debug(tostring(dmgFlowType) .. " " .. tostring(dmgOwnerType))
+-- 			return retval
+-- 		end
+-- 	end
+-- )
 
 -- show action node id
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
@@ -31,6 +67,8 @@ function(args)
 		log.debug("node: " .. tostring(nodeID))
 		last_nodeID = nodeID
 	end
+	-- local wireNum = masterPlayer:getUsableHunterWireNum()
+	-- log.debug(tostring(wireNum))
 	
 end,
 function(retval) end
@@ -121,19 +159,7 @@ function(retval) end
 -- function(retval) return retval end
 -- )
 
----- Hook player info
-local playerInputHook = sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
-sdk.hook(playerInputHook,
-function(args)
-	playerManager = playerManager or sdk.get_managed_singleton("snow.player.PlayerManager")
-	masterPlayer = playerManager:call("findMasterPlayer") -- snow.player.PlayerBase
-	if not masterPlayer then return end
-	masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
-	userArmature = masterPlayer:getMotionFsm2() -- via.motion.MotionFsm2
-	nodeID = userArmature:getCurrentNodeID(0) -- System.UInt64
-end,
-function(retval) return retval end
-)
+
 
 -- re.on_frame(function()
 -- 	if not PlayerManager then
