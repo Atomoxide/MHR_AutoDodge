@@ -38,12 +38,7 @@ function(args)
 		dodgeLock = false
 	end
 	
-    
-    if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
-		dodgeReady = true
-		dodgeAction = actionMove.dodgeMove["weaponOff"]
-		return
-	elseif (isJump or isWireJump or isEscape or isDamage) then
+	if (isJump or isWireJump or isEscape or isDamage) then
 		dodgeReady = false
 		return
     elseif dodgeLock then
@@ -52,8 +47,13 @@ function(args)
         return
 	end
 
-    dodgeReady = true
-	
+	dodgeReady = true
+
+	if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
+		dodgeAction = actionMove.dodgeMove["weaponOff"]
+		return
+	end
+    
 	if trackActionFunc ~= nil then
 		trackActionFunc(nodeID)
 	end
