@@ -49,8 +49,8 @@ function(retval) return retval end
 -- )
 
 -- show action node id
--- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
--- function(args)
+sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+function(args)
 	-- local motionControl = sdk.to_managed_object(args[2])
 	-- local refPlayerBase = motionControl:get_field("_RefPlayerBase")
 	-- local curPlayerIndex = refPlayerBase:get_field("_PlayerIndex")
@@ -73,12 +73,15 @@ function(retval) return retval end
 
 	-- snow.player.PlayerUserDataQuestCommon
 	
--- 	local wireSkill = masterPlayer:get_EquipSkill210_UsedWireIndex()
--- 	log.debug(tostring(wireSkill))
+	local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+	local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
+	-- local replaceSkillType = replaceSkillData[0]:get_field("_ReplaceAtkTypes")
+	-- log.debug(tostring(replaceSkillType[1]))
+	log.debug(tostring(replaceSkillData))
 
--- end,
--- function(retval) end
--- )
+end,
+function(retval) end
+)
 
 ----------------
 
@@ -87,8 +90,8 @@ function(retval) return retval end
 ----------------
 
 -- Check Player current Status
-sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
-function(args)
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
 -- 	if not masterPlayer then return end
 
 -- 	---- check is weapon drawn
@@ -115,7 +118,7 @@ function(args)
 -- 	end
 
 	-- local stateTag
-	local isInState
+	-- local isInState
 	-- local state
 	-- local kijinState
 
@@ -125,8 +128,8 @@ function(args)
 
 -- 	---- check snow.player.ActStatus
 	-- stateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
-	isInState = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", rideStateTag)
-	log.debug(tostring(isInState))
+	-- isInState = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", rideStateTag)
+	-- log.debug(tostring(isInState))
 
 	
 
@@ -162,9 +165,9 @@ function(args)
 	
 -- 	log.debug(tostring(lbgState))
 	
-end,
-function(retval) return retval end
-)
+-- end,
+-- function(retval) return retval end
+-- )
 
 
 

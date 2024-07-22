@@ -106,6 +106,9 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 	local kijin
     local kijinJyuu
     local state
+    -- local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+	-- local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
+    -- local isVaultEquipped = replaceSkillData == 0
 	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
     kijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)

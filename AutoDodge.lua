@@ -14,6 +14,7 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
+local enableHunterWireCounter = false
 
 local actionMove = require("weaponData.ActionMove")
 actionMove.init()
@@ -29,7 +30,8 @@ function(args)
 	local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
 	local isRide = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", rideStateTag)
-	local dodgeDisabled = not (isJump and isWireJump and isEscape and isDamage and isRide)
+	local dodgeDisabled = isJump or isWireJump or isEscape or isDamage or isRide
+	-- log.debug(tostring(dodgeDisabled))
 
 	---- check is weapon drawn
 	local weaponOn = masterPlayer:call("isWeaponOn")
