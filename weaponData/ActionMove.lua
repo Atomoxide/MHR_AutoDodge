@@ -110,7 +110,8 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
     if EnableHunterWireCounter then
         local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
         local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
-        towerVaultDodge = replaceSkillData == 0
+        local wireNum = masterPlayer:getUsableHunterWireNum()
+        towerVaultDodge = (replaceSkillData == 0) and (wireNum >= 1)
         -- log.debug(tostring(towerVaultDodge))
     end
 	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)

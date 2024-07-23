@@ -14,7 +14,7 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
-EnableHunterWireCounter = false
+EnableHunterWireCounter = true
 
 local actionMove = require("weaponData.ActionMove")
 actionMove.init()
