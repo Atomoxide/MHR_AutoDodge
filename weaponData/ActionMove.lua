@@ -106,25 +106,43 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 	local kijin
     local kijinJyuu
     local state
-    -- local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
-	-- local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
-    -- local isVaultEquipped = replaceSkillData == 0
+    local towerVaultDodge = false
+    if EnableHunterWireCounter then
+        local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+        local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
+        towerVaultDodge = replaceSkillData == 0
+        -- log.debug(tostring(towerVaultDodge))
+    end
 	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
     kijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
     state = masterPlayer:call("get_DBState")
 	local kijinState = masterPlayer:call("isKijinKyouka")
-	if kijinState then
-		return actionMove.dodgeMove["dualBlades"]["kijin_kyouka"]
-	elseif state == kijin then
-		return actionMove.dodgeMove["dualBlades"]["kijin"]
-    elseif state == kijinJyuu then
-		return actionMove.dodgeMove["dualBlades"]["kijin_jyuu"]
-	elseif state == normal then
-		return actionMove.dodgeMove["dualBlades"]["normal"]
-	else
-		return actionMove.dodgeMove["dualBlades"]["normal"]
-	end
+    if towerVaultDodge then
+        if kijinState then
+            return actionMove.dodgeMove["dualBlades"]["kijin_kyouka_vault"]
+        elseif state == kijin then
+            return actionMove.dodgeMove["dualBlades"]["kijin_vault"]
+        elseif state == kijinJyuu then
+            return actionMove.dodgeMove["dualBlades"]["kijin_jyuu_vault"]
+        elseif state == normal then
+            return actionMove.dodgeMove["dualBlades"]["normal_vault"]
+        else
+            return actionMove.dodgeMove["dualBlades"]["normal_vault"]
+        end
+    else
+        if kijinState then
+            return actionMove.dodgeMove["dualBlades"]["kijin_kyouka"]
+        elseif state == kijin then
+            return actionMove.dodgeMove["dualBlades"]["kijin"]
+        elseif state == kijinJyuu then
+            return actionMove.dodgeMove["dualBlades"]["kijin_jyuu"]
+        elseif state == normal then
+            return actionMove.dodgeMove["dualBlades"]["normal"]
+        else
+            return actionMove.dodgeMove["dualBlades"]["normal"]
+        end
+    end
 end
 
 function actionMove.GetLongSwordDodgeMove (masterPlayer)
