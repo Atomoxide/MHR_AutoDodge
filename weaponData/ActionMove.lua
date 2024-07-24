@@ -20,6 +20,14 @@ function actionMove.init()
 
     actionMove.dodgeMove = {
         ["weaponOff"] = 1505041940,
+        ["greatSword"] = {
+            ["normal"] = 1731229352,
+            ["adamant_charged"] = 1148884139,
+            ["plain_adamant_charged"] = 3883211982,
+            ["tackle"] = 877278880,
+            ["defensive_tackle_1"] = 345871120,
+            ["defensive_tackle_2"] = 2805658423
+        },
         ["longSword"] = {
             ["normal"] = 1731229352,
             ["iai"] = 662313942
@@ -43,6 +51,13 @@ function actionMove.init()
     }
 
     actionMove.dodgeLockMove = {
+        ["greatSword"] = {
+            [877278880] = true, -- tackle
+            [345871120] = true, -- defensive tackle @ charge1
+            [2805658423] = true, -- defensive tackle @ charge2/3
+            [2051136789] = true, -- hunting edge
+            [1148884139] = true, -- adamant charge
+        },
         ["longSword"] = {
             [276632468] = true, -- saya
             [1265650183] = true, -- foresight
@@ -59,20 +74,26 @@ function actionMove.init()
     }
 
     actionMove.dodgeKeepLockMove = {
+        ["greatSword"] = {
+            [2059052316] = true, -- hunting edge continuation
+            [3120743513] = true, -- hunting edge continuation
+            [2542821223] = true, -- adamant_charged continuation
+        },
         ["longSword"] = {
             [1261730324] = true, -- saya activated
             -- [49282411] = true, -- missed foresight ends
             -- [662313942] = true, -- iai
         },
         ["dualBlades"] = {
-            [2399642468] = true,  -- vault shroud kijin, kijin_jyuu activated
-            [3862130673] = true -- vault shourld kijin_kyouka, normal activated
+            [2399642468] = true,  -- tower vault kijin, kijin_jyuu activated
+            [3862130673] = true -- tower vault kijin_kyouka, normal activated
         },
         ["horn"] = {},
         ["lightBowGun"] = {}
     }
 
     actionMove.getDodgeMoveFuncs = {
+        ["greatSword"] = actionMove.GetGreatSwordDodgeMove,
         ["longSword"] = actionMove.GetLongSwordDodgeMove,
         ["dualBlades"] = actionMove.GetDualBladesDodgeMove,
         ["horn"] = actionMove.GetGeneralDodgeMove,
@@ -80,6 +101,7 @@ function actionMove.init()
     }
 
     actionMove.getTrackActionFuncs = {
+        ["greatSword"] = actionMove.TrackGreatSwordAction,
         ["longSword"] = actionMove.TrackLongSwordAction,
         ["dualBlades"] = nil,
         ["horn"] = nil,
@@ -99,6 +121,34 @@ end
 
 function actionMove.GetGeneralDodgeMove (masterPlayer)
     return actionMove.dodgeMove[actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]]["normal"]
+end
+
+function actionMove.GetGreatSwordDodgeMove (masterPlayer)
+    if not (InitialCharging or ContinueCharging) then
+        log.debug("normal")
+        return actionMove.dodgeMove["greatSword"]["normal"]
+    end
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) -- adamant_charged
+    local replaceSkillData0 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) -- tackle/ defensive tackle
+    if (InitialCharging or ContinueCharging) and replaceSkillData4 == 1 then
+        local wireNum = masterPlayer:getUsableHunterWireNum()
+        if wireNum >= 2 then
+            log.debug("state1")
+            return actionMove.dodgeMove["greatSword"]["adamant_charged"]
+        end
+    end
+    if replaceSkillData0 == 0 then
+        log.debug("state2")
+        return actionMove.dodgeMove["greatSword"]["tackle"]
+    else
+        log.debug("state3")
+        if InitialCharging then
+            return actionMove.dodgeMove["greatSword"]["defensive_tackle_1"]
+        else
+            return actionMove.dodgeMove["greatSword"]["defensive_tackle_2"]
+        end
+    end
 end
 
 function actionMove.GetDualBladesDodgeMove (masterPlayer)
@@ -163,6 +213,11 @@ end
 -- end
 
 ---- Player action tracking functions
+
+function actionMove.TrackGreatSwordAction (nodeID)
+    InitialCharging = (nodeID == 2881805981)
+    ContinueCharging = (nodeID == 2575542394) or (nodeID == 2408103841) or (nodeID == 1051964360)
+end
 
 function actionMove.TrackLongSwordAction (nodeID)
     Iai = (nodeID == 2346527105) or (nodeID == 1498247531)

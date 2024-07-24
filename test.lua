@@ -64,20 +64,25 @@ function(args)
     --     last_id = action_id
     -- end
 	
-	-- if nodeID ~= last_nodeID then
-	-- 	log.debug("node: " .. tostring(nodeID))
-	-- 	last_nodeID = nodeID
-	-- end
+	if nodeID ~= last_nodeID then
+		log.debug("node: " .. tostring(nodeID))
+		last_nodeID = nodeID
+	end
 	-- local wireNum = masterPlayer:getUsableHunterWireNum()
 	-- log.debug(tostring(wireNum))
 
 	-- snow.player.PlayerUserDataQuestCommon
 	
-	local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
-	local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
-	-- local replaceSkillType = replaceSkillData[0]:get_field("_ReplaceAtkTypes")
-	-- log.debug(tostring(replaceSkillType[1]))
-	log.debug(tostring(replaceSkillData))
+
+	---- replace skill
+	-- local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+	-- local replaceSkillData0 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0))
+	-- local replaceSkillData1 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1))
+	-- local replaceSkillData2 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2))
+	-- local replaceSkillData3 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 3))
+	-- local replaceSkillData4 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4))
+	-- local replaceSkillData5 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5))
+	-- log.debug(tostring(replaceSkillData0..replaceSkillData1..replaceSkillData2..replaceSkillData3..replaceSkillData4..replaceSkillData5))
 
 end,
 function(retval) end
