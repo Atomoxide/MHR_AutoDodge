@@ -55,7 +55,16 @@ function actionMove.init()
             ["normal"] = 1731229352
         },
         ["lightBowGun"] = {
-            ["normal"] = 377966749
+            ["normal"] = 377966749,
+            ["up_step_1"] = 1731229352,
+            ["up_step_2"] = 3638676728,
+            ["left_step_1"] = 1731229350,
+            ["left_step_2"] = 433668853,
+            ["right_step_1"] = 1731229351,
+            ["right_step_2"] = 1937083628,
+            ["down_step_1"] = 3999410464,
+            ["down_step_2"] = 3300539662,
+            ["wire_counter"] = 3692710800,
         },
         ["horn"] = {
             ["normal"] = 1731229352
@@ -124,7 +133,13 @@ function actionMove.init()
         },
         ["horn"] = {},
         ["heavyBowGun"] = {},
-        ["lightBowGun"] = {},
+        ["lightBowGun"] = {
+            -- [2701919729] = true, -- reload: fastest
+            -- [990782832] = true,
+            -- [2317440563] = true, -- reload: fast
+            -- [929939138] = true, 
+            -- [2317440567] = true, -- reload: slow
+        },
         ["hammer"] = {},
         ["shortSword"] = {},
         ["insectGlaive"] = {},
@@ -140,7 +155,7 @@ function actionMove.init()
         ["dualBlades"] = actionMove.GetDualBladesDodgeMove,
         ["horn"] = actionMove.GetGeneralDodgeMove,
         ["heavyBowGun"] = actionMove.GetGeneralDodgeMove,
-        ["lightBowGun"] = actionMove.GetGeneralDodgeMove,
+        ["lightBowGun"] = actionMove.GetLightBowGunDodgeMove,
         ["hammer"] = actionMove.GetGeneralDodgeMove,
         ["shortSword"] = actionMove.GetGeneralDodgeMove,
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
@@ -258,6 +273,38 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
     end
 end
 
+function actionMove.GetLightBowGunDodgeMove (masterPlayer)
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
+    local wireNum = masterPlayer:getUsableHunterWireNum()
+    if replaceSkillData4 == 1 and wireNum >= 1 then
+        return actionMove.dodgeMove["lightBowGun"]["wire_counter"]
+    end
+
+	local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
+    local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
+    local shotState = masterPlayer:call("isLightBowgunTag", shot)
+    if not shotState or not aiming then
+        return actionMove.dodgeMove["lightBowGun"]["normal"]
+    end
+    local dir = actionMove.GetLstickDir(masterPlayer)
+    local key
+    if dir then
+        if Step1 then
+            key = dir.."_step_2"
+        else
+            key = dir.."_step_1"
+        end
+    else
+        if Step1 then
+            key = "up_step_2"
+        else
+            key = "up_step_1"
+        end
+    end
+    return actionMove.dodgeMove["lightBowGun"][key]
+end
+
 function actionMove.GetSlashAxeDodgeMove (masterPlayer)
     local sword
     local state
@@ -283,13 +330,6 @@ function actionMove.GetChargeAxeDodgeMove (masterPlayer)
 end
 
 
-
--- function actionMove.GetLightBowGunDodgeMove (masterPlayer)
---     local isStepEscape
---     isStepEscape = masterPlayer:get_field("_IsStepEscapeBuff")
---     if isStepEscape
--- end
-
 ---- Player action tracking functions
 
 function actionMove.TrackGreatSwordAction (nodeID)
@@ -300,6 +340,31 @@ end
 function actionMove.TrackLongSwordAction (nodeID)
     Iai = (nodeID == 2346527105) or (nodeID == 1498247531)
     -- log.debug(tostring(nodeID))
+end
+
+function actionMove.TrackLightBowgunAction (nodeID)
+    Step1 = (nodeID == 1731229352) or (nodeID == 1731229350) or (nodeID == 1731229351) or (nodeID == 3999410464)
+end
+
+---- Player L Stick Direction
+function actionMove.GetLstickDir (masterPlayer)
+    local userInput = masterPlayer:get_RefPlayerInput() --snow.player.PlayerInput
+	local leftJoyDir = userInput:getLstickDir()
+	local dir = nil
+	-- Up
+	if (leftJoyDir >= -0.785 and leftJoyDir <= 0.785) or (leftJoyDir == 3.5762786865234e-07) then
+		dir = "up"
+	-- Down
+	elseif	leftJoyDir >= -3.926 and leftJoyDir <= -2.357 then
+		dir = "down"
+	-- Left
+	elseif	(leftJoyDir >= 0.785 and leftJoyDir <= 1.571) or (leftJoyDir >= -4.9 and leftJoyDir <= -3.926) then
+		dir = "left"
+	-- Right
+	elseif	leftJoyDir >= -2.357 and leftJoyDir <= -0.785 then
+		dir = "right"
+	end
+	return dir
 end
 
 return actionMove

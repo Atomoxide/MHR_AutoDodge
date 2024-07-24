@@ -28,6 +28,48 @@ end,
 function(retval) return retval end
 )
 
+-------------------------------------------------------------------------------------------
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
+-- 	if nodeID ~= last_nodeID then
+-- 		log.debug("node: " .. tostring(nodeID))
+-- 		last_nodeID = nodeID
+-- 	end
+-- end,
+-- function(retval) end
+-- )
+----------------------------------------------------------------------------------------
+
+
+-- local PlayerInput_Hook =  sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
+-- sdk.hook(PlayerInput_Hook, 
+-- function(args)
+-- 	local userInput = masterPlayer:get_RefPlayerInput() --snow.player.PlayerInput
+-- 	local leftJoyDir = userInput:getLstickDir()
+-- 	local dir = "none"
+-- 	-- Up
+-- 	if (leftJoyDir >= -0.785 and leftJoyDir <= 0.785) or (leftJoyDir == 3.5762786865234e-07) then
+-- 		dir = "up"
+
+-- 	-- Down
+-- 	elseif	leftJoyDir >= -3.926 and leftJoyDir <= -2.357 then
+-- 		dir = "down"
+
+-- 	-- Left
+-- 	elseif	(leftJoyDir >= 0.785 and leftJoyDir <= 1.571) or (leftJoyDir >= -4.9 and leftJoyDir <= -3.926) then
+-- 		dir = "left"
+
+-- 	-- Right
+-- 	elseif	leftJoyDir >= -2.357 and leftJoyDir <= -0.785 then
+-- 		dir = "right"
+-- 	end
+-- 	log.debug(tostring(dir))
+-- end,
+-- function(retval)
+-- 	return retval
+-- end
+-- )
+
 -- sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("checkCalcDamage_DamageSide"),
 -- 	function(args)
 -- 		local manager = sdk.to_managed_object(args[2])	
@@ -50,8 +92,8 @@ function(retval) return retval end
 -- )
 
 -- show action node id
-sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
-function(args)
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
 -- 	local motionControl = sdk.to_managed_object(args[2])
 -- 	local refPlayerBase = motionControl:get_field("_RefPlayerBase")
 -- 	local curPlayerIndex = refPlayerBase:get_field("_PlayerIndex")
@@ -65,25 +107,29 @@ function(args)
 --         last_id = action_id
 --     end
 	
-	if nodeID ~= last_nodeID then
-		log.debug("node: " .. tostring(nodeID))
-		last_nodeID = nodeID
-	end
+	-- if nodeID ~= last_nodeID then
+	-- 	log.debug("node: " .. tostring(nodeID))
+	-- 	last_nodeID = nodeID
+	-- end
 -- 	local wireNum = masterPlayer:getUsableHunterWireNum()
 -- 	log.debug(tostring(wireNum))
 
 -- 	snow.player.PlayerUserDataQuestCommon
-	
+-- end,
+-- function(retval) end
+-- )
 
+sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+function(args)
 -- 	-- replace skill
--- 	local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
--- 	local replaceSkillData0 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0))
--- 	local replaceSkillData1 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1))
--- 	local replaceSkillData2 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2))
--- 	local replaceSkillData3 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 3))
--- 	local replaceSkillData4 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4))
--- 	local replaceSkillData5 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5))
--- 	log.debug(tostring(replaceSkillData0..replaceSkillData1..replaceSkillData2..replaceSkillData3..replaceSkillData4..replaceSkillData5))
+	local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+	local replaceSkillData0 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0))
+	local replaceSkillData1 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1))
+	local replaceSkillData2 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2))
+	local replaceSkillData3 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 3))
+	local replaceSkillData4 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4))
+	local replaceSkillData5 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5))
+	log.debug(tostring(replaceSkillData0..replaceSkillData1..replaceSkillData2..replaceSkillData3..replaceSkillData4..replaceSkillData5))
 
 end,
 function(retval) end
@@ -166,9 +212,13 @@ function(retval) end
 	-- 	log.debug("Unknown")
 	-- end
 
--- 	local lbgState
--- 	-- local turnAble = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Turnable"):get_data(nil)
---     lbgState = masterPlayer:get_field("_IsIaiCounter")
+	-- local lbgState
+	-- local turnAble = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
+    -- lbgState = masterPlayer:call("isLightBowgunTag", turnAble)
+	-- local masterPlayerGameObject = masterPlayer:call("get_GameObject") -- via.GameObject
+	-- local masterPlayerBehaviorAction = masterPlayerGameObject:call("getComponent(System.Type)",sdk.typeof("via.behaviortree.Action"))
+	-- lbgState = masterPlayerBehaviorAction:get_Enabled()
+-- 	lbgState = masterPlayer:isReloadMove()
 	
 -- 	log.debug(tostring(lbgState))
 	
