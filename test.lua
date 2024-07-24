@@ -10,6 +10,7 @@ local jumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field
 local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
+local guardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
 local rideStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Ride"):get_data(nil)
 local dmgOwnerType, curPlayerIndex
 
@@ -49,8 +50,8 @@ function(retval) return retval end
 -- )
 
 -- show action node id
-sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
-function(args)
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
 	-- local motionControl = sdk.to_managed_object(args[2])
 	-- local refPlayerBase = motionControl:get_field("_RefPlayerBase")
 	-- local curPlayerIndex = refPlayerBase:get_field("_PlayerIndex")
@@ -64,10 +65,10 @@ function(args)
     --     last_id = action_id
     -- end
 	
-	if nodeID ~= last_nodeID then
-		log.debug("node: " .. tostring(nodeID))
-		last_nodeID = nodeID
-	end
+	-- if nodeID ~= last_nodeID then
+	-- 	log.debug("node: " .. tostring(nodeID))
+	-- 	last_nodeID = nodeID
+	-- end
 	-- local wireNum = masterPlayer:getUsableHunterWireNum()
 	-- log.debug(tostring(wireNum))
 
@@ -84,9 +85,9 @@ function(args)
 	-- local replaceSkillData5 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5))
 	-- log.debug(tostring(replaceSkillData0..replaceSkillData1..replaceSkillData2..replaceSkillData3..replaceSkillData4..replaceSkillData5))
 
-end,
-function(retval) end
-)
+-- end,
+-- function(retval) end
+-- )
 
 ----------------
 
@@ -95,8 +96,8 @@ function(retval) end
 ----------------
 
 -- Check Player current Status
--- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
--- function(args)
+sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+function(args)
 -- 	if not masterPlayer then return end
 
 -- 	---- check is weapon drawn
@@ -110,12 +111,13 @@ function(retval) end
 -- 	local isWireJump = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", wireJumpStateTag)
 -- local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
 -- 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
+	local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
 
--- if isEscape then
--- 	log.debug("escape")
--- else
--- 	log.debug("no")
--- end
+if isGuard then
+	log.debug("yes")
+else
+	log.debug("no")
+end
 
 -- 	if isJump or isWireJump or isEscape or isDamage then
 -- 		dodgeReady = false
@@ -170,9 +172,9 @@ function(retval) end
 	
 -- 	log.debug(tostring(lbgState))
 	
--- end,
--- function(retval) return retval end
--- )
+end,
+function(retval) return retval end
+)
 
 
 

@@ -7,6 +7,7 @@ local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_f
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
 local rideStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Ride"):get_data(nil)
+local guardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
 local masterPlayerBehaviorTree
 local dmgOwnerType, curPlayerIndex
 local dodgeAction
@@ -30,7 +31,8 @@ function(args)
 	local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
 	local isRide = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", rideStateTag)
-	local dodgeDisabled = isJump or isWireJump or isEscape or isDamage or isRide
+	local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
+	local dodgeDisabled = isJump or isWireJump or isEscape or isDamage or isRide or isGuard
 	-- log.debug(tostring(dodgeDisabled))
 
 	---- check is weapon drawn

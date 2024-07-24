@@ -125,7 +125,6 @@ end
 
 function actionMove.GetGreatSwordDodgeMove (masterPlayer)
     if not (InitialCharging or ContinueCharging) then
-        log.debug("normal")
         return actionMove.dodgeMove["greatSword"]["normal"]
     end
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
@@ -134,15 +133,12 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer)
     if (InitialCharging or ContinueCharging) and replaceSkillData4 == 1 then
         local wireNum = masterPlayer:getUsableHunterWireNum()
         if wireNum >= 2 then
-            log.debug("state1")
             return actionMove.dodgeMove["greatSword"]["adamant_charged"]
         end
     end
     if replaceSkillData0 == 0 then
-        log.debug("state2")
         return actionMove.dodgeMove["greatSword"]["tackle"]
     else
-        log.debug("state3")
         if InitialCharging then
             return actionMove.dodgeMove["greatSword"]["defensive_tackle_1"]
         else
