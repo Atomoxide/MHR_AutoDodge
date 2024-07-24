@@ -42,12 +42,38 @@ function actionMove.init()
             ["kijin_vault"] = 3316282274,
             ["kijin_jyuu_vault"] = 3316282274
         },
-        ["horn"] = {
+        ["heavyBowGun"] = {
+            ["normal"] = 1731229352
+        },
+        ["hammer"] = {
+            ["normal"] = 1731229352
+        },
+        ["shortSword"] = {
+            ["normal"] = 1731229352
+        },
+        ["insectGlaive"] = {
             ["normal"] = 1731229352
         },
         ["lightBowGun"] = {
             ["normal"] = 377966749
-        }
+        },
+        ["horn"] = {
+            ["normal"] = 1731229352
+        },
+        ["slashAxe"] = {
+            ["normal"] = 1731229352,
+            ["sword"] = 1888074074
+        },
+        ["chargeAxe"] = {
+            ["normal"] = 1731229352,
+            ["axe"] = 3940639656
+        },
+        ["lance"] = {
+            ["normal"] = 1731229352
+        },
+        ["gunLance"] = {
+            ["normal"] = 1731229352
+        },
     }
 
     actionMove.dodgeLockMove = {
@@ -70,7 +96,15 @@ function actionMove.init()
             [3783600746] = true -- vault shourld kijin_kyouka, normal
         },
         ["horn"] = {},
-        ["lightBowGun"] = {}
+        ["heavyBowGun"] = {},
+        ["lightBowGun"] = {},
+        ["hammer"] = {},
+        ["shortSword"] = {},
+        ["insectGlaive"] = {},
+        ["slashAxe"] = {},
+        ["chargeAxe"] = {},
+        ["lance"] = {},
+        ["gunLance"] = {},
     }
 
     actionMove.dodgeKeepLockMove = {
@@ -89,7 +123,15 @@ function actionMove.init()
             [3862130673] = true -- tower vault kijin_kyouka, normal activated
         },
         ["horn"] = {},
-        ["lightBowGun"] = {}
+        ["heavyBowGun"] = {},
+        ["lightBowGun"] = {},
+        ["hammer"] = {},
+        ["shortSword"] = {},
+        ["insectGlaive"] = {},
+        ["slashAxe"] = {},
+        ["chargeAxe"] = {},
+        ["lance"] = {},
+        ["gunLance"] = {},
     }
 
     actionMove.getDodgeMoveFuncs = {
@@ -97,7 +139,15 @@ function actionMove.init()
         ["longSword"] = actionMove.GetLongSwordDodgeMove,
         ["dualBlades"] = actionMove.GetDualBladesDodgeMove,
         ["horn"] = actionMove.GetGeneralDodgeMove,
-        ["lightBowGun"] = actionMove.GetGeneralDodgeMove
+        ["heavyBowGun"] = actionMove.GetGeneralDodgeMove,
+        ["lightBowGun"] = actionMove.GetGeneralDodgeMove,
+        ["hammer"] = actionMove.GetGeneralDodgeMove,
+        ["shortSword"] = actionMove.GetGeneralDodgeMove,
+        ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
+        ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
+        ["chargeAxe"] = actionMove.GetChargeAxeDodgeMove,
+        ["lance"] = actionMove.GetGeneralDodgeMove,
+        ["gunLance"] = actionMove.GetGeneralDodgeMove,
     }
 
     actionMove.getTrackActionFuncs = {
@@ -105,7 +155,15 @@ function actionMove.init()
         ["longSword"] = actionMove.TrackLongSwordAction,
         ["dualBlades"] = nil,
         ["horn"] = nil,
-        ["lightBowGun"] = nil
+        ["heavyBowGun"] = nil,
+        ["lightBowGun"] = nil,
+        ["hammer"] = nil,
+        ["shortSword"] = nil,
+        ["insectGlaive"] = nil,
+        ["slashAxe"] = nil,
+        ["chargeAxe"] = nil,
+        ["lance"] = nil,
+        ["gunLance"] = nil,
     }
 
     actionMove.weaponOffExceptions = {
@@ -197,6 +255,30 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
         return actionMove.dodgeMove["longSword"]["iai"]
     else
         return actionMove.dodgeMove["longSword"]["normal"]
+    end
+end
+
+function actionMove.GetSlashAxeDodgeMove (masterPlayer)
+    local sword
+    local state
+    sword = sdk.find_type_definition("snow.player.SlashAxe.WeaponMode"):get_field("Sword"):get_data(nil)
+    state = masterPlayer:call("get_Mode")
+    if state == sword then
+        return actionMove.dodgeMove["slashAxe"]["sword"]
+    else
+        return actionMove.dodgeMove["slashAxe"]["normal"]
+    end
+end
+
+function actionMove.GetChargeAxeDodgeMove (masterPlayer)
+    local axe
+    local state
+	axe = sdk.find_type_definition("snow.player.ChargeAxe.WeaponMode"):get_field("Axe"):get_data(nil)
+    state = masterPlayer:call("get_Mode")
+    if state == axe then
+        return actionMove.dodgeMove["chargeAxe"]["axe"]
+    else
+        return actionMove.dodgeMove["chargeAxe"]["normal"]
     end
 end
 
