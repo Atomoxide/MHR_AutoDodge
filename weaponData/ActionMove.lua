@@ -50,6 +50,7 @@ function actionMove.init()
             ["right_escape"] = 1731229351,
             ["left_step"] = 163832306,
             ["right_step"] = 893403418,
+            ["counter_shot"] = 1966874939,
         },
         ["hammer"] = {
             ["normal"] = 1731229352
@@ -70,7 +71,7 @@ function actionMove.init()
             ["right_step_2"] = 1937083628,
             ["down_step_1"] = 3999410464,
             ["down_step_2"] = 3300539662,
-            ["wire_counter"] = 3692710800,
+            ["wyvern_counter"] = 3692710800,
         },
         ["horn"] = {
             ["normal"] = 1731229352
@@ -112,7 +113,7 @@ function actionMove.init()
         },
         ["horn"] = {},
         ["heavyBowgun"] = {
-            [1966874939] = true, -- silk counter
+            [1966874939] = true, -- counter shot
         },
         ["lightBowgun"] = {
             -- [2701919729] = true, -- reload: fastest
@@ -142,8 +143,8 @@ function actionMove.init()
             -- [662313942] = true, -- iai
         },
         ["dualBlades"] = {
-            [2399642468] = true,  -- tower vault kijin, kijin_jyuu activated
-            [3862130673] = true -- tower vault kijin_kyouka, normal activated
+            [2399642468] = true,  -- shrouded vault kijin, kijin_jyuu activated
+            [3862130673] = true -- shrouded vault kijin_kyouka, normal activated
         },
         ["horn"] = {},
         ["heavyBowgun"] = {
@@ -214,13 +215,15 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) -- adamant_charged
     local replaceSkillData0 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) -- tackle/ defensive tackle
-    if (InitialCharging or ContinueCharging) and replaceSkillData4 == 1 then
+    if (InitialCharging or ContinueCharging) and replaceSkillData4 == 1 and DodgeConfig.adamantChargedSlash then
         local wireNum = masterPlayer:getUsableHunterWireNum()
         if wireNum >= 2 then
             return actionMove.dodgeMove["greatSword"]["adamant_charged"]
         end
     end
-    if replaceSkillData0 == 0 then
+    if not DodgeConfig.tackle then
+        return nil
+    elseif replaceSkillData0 == 0 then
         return actionMove.dodgeMove["greatSword"]["tackle"]
     else
         if InitialCharging then
@@ -236,20 +239,20 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 	local kijin
     local kijinJyuu
     local state
-    local towerVaultDodge = false
-    if EnableHunterWireCounter then
+    local shroudedVaultDodge = false
+    if DodgeConfig.shroudedVault then
         local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
         local replaceSkillData = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
         local wireNum = masterPlayer:getUsableHunterWireNum()
-        towerVaultDodge = (replaceSkillData == 0) and (wireNum >= 1)
-        -- log.debug(tostring(towerVaultDodge))
+        shroudedVaultDodge = (replaceSkillData == 0) and (wireNum >= 1)
+        -- log.debug(tostring(shroudedVaultDodge))
     end
 	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
     kijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
     state = masterPlayer:call("get_DBState")
 	local kijinState = masterPlayer:call("isKijinKyouka")
-    if towerVaultDodge then
+    if shroudedVaultDodge then
         if kijinState then
             return actionMove.dodgeMove["dualBlades"]["kijin_kyouka_vault"]
         elseif state == kijin then
@@ -288,8 +291,8 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
     local wireNum = masterPlayer:getUsableHunterWireNum()
-    if replaceSkillData4 == 1 and wireNum >= 1 then
-        return actionMove.dodgeMove["lightBowgun"]["wire_counter"]
+    if replaceSkillData4 == 1 and wireNum >= 1 and DodgeConfig.wyvernCounter then
+        return actionMove.dodgeMove["lightBowgun"]["wyvern_counter"]
     end
 
 	-- local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
@@ -318,6 +321,12 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer)
 end
 
 function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
+    local wireNum = masterPlayer:getUsableHunterWireNum()
+    if replaceSkillData4 == 0 and wireNum >= 1 and DodgeConfig.counterShot then
+        return actionMove.dodgeMove["heavyBowgun"]["counter_shot"]
+    end
     if not HeavyBowgunAiming then
         -- log.debug("direct dodge")
         return actionMove.dodgeMove["heavyBowgun"]["normal"]
@@ -384,10 +393,10 @@ function actionMove.TrackHeavyBowgunAction (masterPlayer, nodeID)
     -- log.debug(tostring(HeavyBowgunAiming))
     -- log.debug(tostring(nodeID))
     if nodeID == 3346707463 or nodeID == 2719596258 then
-        log.debug("set true")
+        -- log.debug("set true")
         HeavyBowgunAiming = true
     elseif nodeID == 4097256303 then
-        log.debug("set false")
+        -- log.debug("set false")
         HeavyBowgunAiming = false
     end
     

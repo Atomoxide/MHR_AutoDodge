@@ -1,3 +1,4 @@
+local configPath = "AutoDodge.json"
 local masterPlayerIndex
 local masterPlayer
 local nodeID
@@ -15,15 +16,58 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
-EnableHunterWireCounter = true
 
 local actionMove = require("weaponData.ActionMove")
 actionMove.init()
+
+---- config
+
+DodgeConfig = {
+	enabled = true,
+	shroudedVault = true,
+	adamantChargedSlash = true,
+	tackle = true,
+	wyvernCounter = true,
+	counterShot = true,
+}
+
+---- Load config file
+local function LoadAutoDodgeConfig()
+    if json ~= nil then
+        local file = json.load_file(configPath)
+        if file then
+            DodgeConfig.enabled = file.enabled
+            popWindow = file.popWindow
+			DodgeConfig.shroudedVault = file.shroudedVault
+			DodgeConfig.adamantChargedSlash = file.adamantChargedSlash
+			DodgeConfig.tackle = file.tackle
+			DodgeConfig.wyvernCounter = file.wyvernCounter
+			DodgeConfig.counterShot = file.counterShot
+        end
+    end
+end
+LoadAutoDodgeConfig()
+
+-- Save the config
+local function SaveAutoDodgeConfig()
+    json.dump_file(configPath, {
+        enabled = DodgeConfig.enabled,
+        shroudedVault = DodgeConfig.shroudedVault,
+		adamantChargedSlash = DodgeConfig.adamantChargedSlash,
+		tackle = DodgeConfig.tackle,
+		wyvernCounter = DodgeConfig.wyvernCounter,
+		counterShot = DodgeConfig.counterShot
+    })
+end
 
 ---- Check Player current Status
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 function(args)
 	if not masterPlayer then return end
+	if not DodgeConfig.enabled then 
+		dodgeReady = false
+		return 
+	end
     -- log.debug(tostring(dodgeReady))
     ---- check player status
     local isJump = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", jumpStateTag)
@@ -86,7 +130,7 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
     function(retval)
 		local dmgFlowType = sdk.to_int64(retval)
 		if curPlayerIndex == masterPlayerIndex and dmgOwnerType == 1 and dmgFlowType == 0 then
-			if dodgeReady then
+			if dodgeReady and (dodgeAction ~= nil) then
 				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
 				return sdk.to_ptr(1)
 			else
@@ -116,3 +160,83 @@ function(args)
 end,
 function(retval) return retval end
 )
+
+-- REFramework UI
+re.on_draw_ui(function()
+    if imgui.button("Toggle Auto Dodge Config GUI") then
+        popWindow = not popWindow
+        SaveAutoDodgeConfig()
+    end
+    if popWindow then
+        
+        imgui.push_style_var(11, 5.0) -- Rounded elements
+        imgui.push_style_var(2, 10.0) -- Window Padding
+
+        alreadyOpen = true
+        popWindow = imgui.begin_window("Auto Dodge Config", popWindow, 64)
+		
+		local changed = false
+
+		imgui.text("General:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.enabled = imgui.checkbox("Enable Auto Dodge", DodgeConfig.enabled)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Great Sword:")
+		imgui.spacing()
+		imgui.indent(25)
+		changed, DodgeConfig.adamantChargedSlash = imgui.checkbox("Auto-casting Adamant Charged Slash", DodgeConfig.adamantChargedSlash)
+		imgui.spacing()
+		changed, DodgeConfig.tackle = imgui.checkbox("Auto Tackle during Charging", DodgeConfig.tackle)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Dual Blades:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.shroudedVault = imgui.checkbox("Auto-casting Shrouded Vault", DodgeConfig.shroudedVault)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Light Bowgun:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.wyvernCounter = imgui.checkbox("Auto-casting Wyvern Counter", DodgeConfig.wyvernCounter)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Heavy Bowgun:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.counterShot = imgui.checkbox("Auto-casting Counter Shot", DodgeConfig.counterShot)
+        imgui.unindent(25)
+		imgui.spacing()
+
+        -- imgui.spacing()
+        -- if imgui.button("   « Attack »    ") then spawn_bird("atk") end
+        -- imgui.same_line()
+        -- if imgui.button("   « Defense »   ") then spawn_bird("def") end
+        -- if imgui.button("   « Health »    ") then spawn_bird("hp") end
+        -- imgui.same_line()
+        -- if imgui.button("   « Stamina »   ") then spawn_bird("spd") end
+        -- imgui.spacing()
+        -- if imgui.button("                 « Rainbow »                  ") then spawn_bird("all") end
+        -- if imgui.button("                  « Golden »                    ") then spawn_bird("gold") end
+        -- local changed = false
+        -- imgui.indent(25)
+        -- imgui.spacing()
+        -- changed, autospawn.enabled = imgui.checkbox("Auto-Spawn Prism", autospawn.enabled)
+        -- imgui.unindent(25)
+        if changed then SaveAutoDodgeConfig() end
+    
+        imgui.spacing()
+        imgui.spacing()
+        imgui.pop_style_var(2)
+        imgui.end_window()
+    elseif alreadyOpen then
+        alreadyOpen = false
+        SaveAutoDodgeConfig()
+    end
+end)
