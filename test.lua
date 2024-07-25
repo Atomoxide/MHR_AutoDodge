@@ -144,7 +144,13 @@ function(retval) end
 -- Check Player current Status
 -- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 -- function(args)
+
 -- 	if not masterPlayer then return end
+
+-- 	local turnAble = sdk.find_type_definition("snow.player.HeavyBowgunTag"):get_field("Charge"):get_data(nil)
+
+-- 	local isShoot = masterPlayer:call("isHeavyBowgunTag", turnAble)
+-- 	log.debug(tostring(isShoot))
 
 -- 	---- check is weapon drawn
 -- 	local weaponOn = masterPlayer:call("isWeaponOn")

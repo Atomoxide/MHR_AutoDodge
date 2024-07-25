@@ -5,8 +5,8 @@ function actionMove.init()
         [0] = "greatSword",
         [1] = "slashAxe", -- aka switch axe
         [2] = "longSword",
-        [3] = "lightBowGun",
-        [4] = "heavyBowGun",
+        [3] = "lightBowgun",
+        [4] = "heavyBowgun",
         [5] = "hammer",
         [6] = "gunLance",
         [7] = "lance",
@@ -42,9 +42,10 @@ function actionMove.init()
             ["kijin_vault"] = 3316282274,
             ["kijin_jyuu_vault"] = 3316282274
         },
-        ["heavyBowGun"] = {
+        ["heavyBowgun"] = {
             ["normal"] = 1731229352,
-            ["back_escape"] = 3999410464,
+            ["up_escape"] = 1731229352,
+            ["down_escape"] = 3999410464,
             ["left_escape"] = 1731229350,
             ["right_escape"] = 1731229351,
             ["left_step"] = 163832306,
@@ -59,7 +60,7 @@ function actionMove.init()
         ["insectGlaive"] = {
             ["normal"] = 1731229352
         },
-        ["lightBowGun"] = {
+        ["lightBowgun"] = {
             ["normal"] = 377966749,
             ["up_step_1"] = 1731229352,
             ["up_step_2"] = 3638676728,
@@ -110,10 +111,10 @@ function actionMove.init()
             [3783600746] = true -- vault shourld kijin_kyouka, normal
         },
         ["horn"] = {},
-        ["heavyBowGun"] = {
+        ["heavyBowgun"] = {
             [1966874939] = true, -- silk counter
         },
-        ["lightBowGun"] = {
+        ["lightBowgun"] = {
             -- [2701919729] = true, -- reload: fastest
             -- [990782832] = true,
             -- [2317440563] = true, -- reload: fast
@@ -145,11 +146,11 @@ function actionMove.init()
             [3862130673] = true -- tower vault kijin_kyouka, normal activated
         },
         ["horn"] = {},
-        ["heavyBowGun"] = {
+        ["heavyBowgun"] = {
             [3508851309] = true, -- silk counter ready
             [1922002985] = true, -- silk counter activated
         },
-        ["lightBowGun"] = {},
+        ["lightBowgun"] = {},
         ["hammer"] = {},
         ["shortSword"] = {},
         ["insectGlaive"] = {},
@@ -164,8 +165,8 @@ function actionMove.init()
         ["longSword"] = actionMove.GetLongSwordDodgeMove,
         ["dualBlades"] = actionMove.GetDualBladesDodgeMove,
         ["horn"] = actionMove.GetGeneralDodgeMove,
-        ["heavyBowGun"] = actionMove.GetGeneralDodgeMove,
-        ["lightBowGun"] = actionMove.GetLightBowGunDodgeMove,
+        ["heavyBowgun"] = actionMove.GetHeavyBowgunDodgeMove,
+        ["lightBowgun"] = actionMove.GetLightBowgunDodgeMove,
         ["hammer"] = actionMove.GetGeneralDodgeMove,
         ["shortSword"] = actionMove.GetGeneralDodgeMove,
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
@@ -180,8 +181,8 @@ function actionMove.init()
         ["longSword"] = actionMove.TrackLongSwordAction,
         ["dualBlades"] = nil,
         ["horn"] = nil,
-        ["heavyBowGun"] = nil,
-        ["lightBowGun"] = actionMove.TrackLightBowgunAction,
+        ["heavyBowgun"] = actionMove.TrackHeavyBowgunAction,
+        ["lightBowgun"] = actionMove.TrackLightBowgunAction,
         ["hammer"] = nil,
         ["shortSword"] = nil,
         ["insectGlaive"] = nil,
@@ -283,19 +284,20 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetLightBowGunDodgeMove (masterPlayer)
+function actionMove.GetLightBowgunDodgeMove (masterPlayer)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
     local wireNum = masterPlayer:getUsableHunterWireNum()
     if replaceSkillData4 == 1 and wireNum >= 1 then
-        return actionMove.dodgeMove["lightBowGun"]["wire_counter"]
+        return actionMove.dodgeMove["lightBowgun"]["wire_counter"]
     end
 
 	-- local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
     local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
+    local isAiming = masterPlayer:call("isLightBowgunTag", aiming)
     -- local shotState = masterPlayer:call("isLightBowgunTag", shot)
-    if not ShotState or not aiming then
-        return actionMove.dodgeMove["lightBowGun"]["normal"]
+    if not ShotState or not isAiming then
+        return actionMove.dodgeMove["lightBowgun"]["normal"]
     end
     local dir = actionMove.GetLstickDir(masterPlayer)
     local key
@@ -312,7 +314,23 @@ function actionMove.GetLightBowGunDodgeMove (masterPlayer)
             key = "up_step_1"
         end
     end
-    return actionMove.dodgeMove["lightBowGun"][key]
+    return actionMove.dodgeMove["lightBowgun"][key]
+end
+
+function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
+    if not HeavyBowgunAiming then
+        -- log.debug("direct dodge")
+        return actionMove.dodgeMove["heavyBowgun"]["normal"]
+    else
+        local dir = actionMove.GetLstickDir(masterPlayer)
+        if (not ShotState) or (dir == "up") or (dir == "down") then
+            -- log.debug("escape")
+            return actionMove.dodgeMove["heavyBowgun"][dir.."_escape"]
+        else
+            -- log.debug("step")
+            return actionMove.dodgeMove["heavyBowgun"][dir.."_step"]
+        end
+    end
 end
 
 function actionMove.GetSlashAxeDodgeMove (masterPlayer)
@@ -359,7 +377,26 @@ function actionMove.TrackLightBowgunAction (masterPlayer, nodeID)
     if nodeID == 2926577812 or nodeID == 280999592 then
         ShotState = false
     end
-    log.debug(tostring(ShotState))
+    -- log.debug(tostring(ShotState))
+end
+
+function actionMove.TrackHeavyBowgunAction (masterPlayer, nodeID)
+    -- log.debug(tostring(HeavyBowgunAiming))
+    -- log.debug(tostring(nodeID))
+    if nodeID == 3346707463 or nodeID == 2719596258 then
+        log.debug("set true")
+        HeavyBowgunAiming = true
+    elseif nodeID == 4097256303 then
+        log.debug("set false")
+        HeavyBowgunAiming = false
+    end
+    
+    local shot = sdk.find_type_definition("snow.player.HeavyBowgunTag"):get_field("Charge"):get_data(nil)
+    ShotState = ShotState or masterPlayer:call("isHeavyBowgunTag", shot)
+    if nodeID == 3346707463 or nodeID == 2719596258 then
+        ShotState = false
+    end
+    
 end
 
 ---- Player L Stick Direction
