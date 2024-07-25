@@ -51,6 +51,7 @@ function actionMove.init()
             ["left_step"] = 163832306,
             ["right_step"] = 893403418,
             ["counter_shot"] = 1966874939,
+            ["counter_charge"] = 3013461642,
         },
         ["hammer"] = {
             ["normal"] = 1731229352
@@ -114,6 +115,7 @@ function actionMove.init()
         ["horn"] = {},
         ["heavyBowgun"] = {
             [1966874939] = true, -- counter shot
+            [3013461642] = true, -- counter charge
         },
         ["lightBowgun"] = {
             -- [2701919729] = true, -- reload: fastest
@@ -148,8 +150,9 @@ function actionMove.init()
         },
         ["horn"] = {},
         ["heavyBowgun"] = {
-            [3508851309] = true, -- silk counter ready
-            [1922002985] = true, -- silk counter activated
+            [3508851309] = true, -- counter shot/charge ready
+            [1922002985] = true, -- counter shot activated
+            [335808431] = true, -- counter charge activated
         },
         ["lightBowgun"] = {},
         ["hammer"] = {},
@@ -323,9 +326,14 @@ end
 function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
+    local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
     local wireNum = masterPlayer:getUsableHunterWireNum()
-    if replaceSkillData4 == 0 and wireNum >= 1 and DodgeConfig.counterShot then
+    if replaceSkillData4 == 0 and replaceSkillData1 == 0 and wireNum >= 2 and DodgeConfig.counterShot then
         return actionMove.dodgeMove["heavyBowgun"]["counter_shot"]
+    end
+
+    if replaceSkillData1 == 1 and replaceSkillData4 == 0 and wireNum >= 1 and DodgeConfig.counterCharge then
+        return actionMove.dodgeMove["heavyBowgun"]["counter_charge"]
     end
     if not HeavyBowgunAiming then
         -- log.debug("direct dodge")

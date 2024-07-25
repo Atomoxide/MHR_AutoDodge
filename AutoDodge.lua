@@ -29,6 +29,7 @@ DodgeConfig = {
 	tackle = true,
 	wyvernCounter = true,
 	counterShot = true,
+	counterCharge = true,
 }
 
 ---- Load config file
@@ -43,6 +44,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.tackle = file.tackle
 			DodgeConfig.wyvernCounter = file.wyvernCounter
 			DodgeConfig.counterShot = file.counterShot
+			DodgeConfig.counterShot = file.counterCharge
         end
     end
 end
@@ -56,7 +58,8 @@ local function SaveAutoDodgeConfig()
 		adamantChargedSlash = DodgeConfig.adamantChargedSlash,
 		tackle = DodgeConfig.tackle,
 		wyvernCounter = DodgeConfig.wyvernCounter,
-		counterShot = DodgeConfig.counterShot
+		counterShot = DodgeConfig.counterShot,
+		counterCharge = DodgeConfig.counterCharge,
     })
 end
 
@@ -211,24 +214,10 @@ re.on_draw_ui(function()
 		imgui.spacing()
 		imgui.indent(25)
         changed, DodgeConfig.counterShot = imgui.checkbox("Auto-casting Counter Shot", DodgeConfig.counterShot)
+		imgui.spacing()
+		changed, DodgeConfig.counterCharge = imgui.checkbox("Auto-casting Counter Charge", DodgeConfig.counterCharge)
         imgui.unindent(25)
 		imgui.spacing()
-
-        -- imgui.spacing()
-        -- if imgui.button("   « Attack »    ") then spawn_bird("atk") end
-        -- imgui.same_line()
-        -- if imgui.button("   « Defense »   ") then spawn_bird("def") end
-        -- if imgui.button("   « Health »    ") then spawn_bird("hp") end
-        -- imgui.same_line()
-        -- if imgui.button("   « Stamina »   ") then spawn_bird("spd") end
-        -- imgui.spacing()
-        -- if imgui.button("                 « Rainbow »                  ") then spawn_bird("all") end
-        -- if imgui.button("                  « Golden »                    ") then spawn_bird("gold") end
-        -- local changed = false
-        -- imgui.indent(25)
-        -- imgui.spacing()
-        -- changed, autospawn.enabled = imgui.checkbox("Auto-Spawn Prism", autospawn.enabled)
-        -- imgui.unindent(25)
         if changed then SaveAutoDodgeConfig() end
     
         imgui.spacing()
