@@ -43,7 +43,12 @@ function actionMove.init()
             ["kijin_jyuu_vault"] = 3316282274
         },
         ["heavyBowGun"] = {
-            ["normal"] = 1731229352
+            ["normal"] = 1731229352,
+            ["back_escape"] = 3999410464,
+            ["left_escape"] = 1731229350,
+            ["right_escape"] = 1731229351,
+            ["left_step"] = 163832306,
+            ["right_step"] = 893403418,
         },
         ["hammer"] = {
             ["normal"] = 1731229352
@@ -105,8 +110,16 @@ function actionMove.init()
             [3783600746] = true -- vault shourld kijin_kyouka, normal
         },
         ["horn"] = {},
-        ["heavyBowGun"] = {},
-        ["lightBowGun"] = {},
+        ["heavyBowGun"] = {
+            [1966874939] = true, -- silk counter
+        },
+        ["lightBowGun"] = {
+            -- [2701919729] = true, -- reload: fastest
+            -- [990782832] = true,
+            -- [2317440563] = true, -- reload: fast
+            -- [929939138] = true, 
+            -- [2317440567] = true, -- reload: slow
+        },
         ["hammer"] = {},
         ["shortSword"] = {},
         ["insectGlaive"] = {},
@@ -132,14 +145,11 @@ function actionMove.init()
             [3862130673] = true -- tower vault kijin_kyouka, normal activated
         },
         ["horn"] = {},
-        ["heavyBowGun"] = {},
-        ["lightBowGun"] = {
-            -- [2701919729] = true, -- reload: fastest
-            -- [990782832] = true,
-            -- [2317440563] = true, -- reload: fast
-            -- [929939138] = true, 
-            -- [2317440567] = true, -- reload: slow
+        ["heavyBowGun"] = {
+            [3508851309] = true, -- silk counter ready
+            [1922002985] = true, -- silk counter activated
         },
+        ["lightBowGun"] = {},
         ["hammer"] = {},
         ["shortSword"] = {},
         ["insectGlaive"] = {},
@@ -171,7 +181,7 @@ function actionMove.init()
         ["dualBlades"] = nil,
         ["horn"] = nil,
         ["heavyBowGun"] = nil,
-        ["lightBowGun"] = nil,
+        ["lightBowGun"] = actionMove.TrackLightBowgunAction,
         ["hammer"] = nil,
         ["shortSword"] = nil,
         ["insectGlaive"] = nil,
@@ -281,10 +291,10 @@ function actionMove.GetLightBowGunDodgeMove (masterPlayer)
         return actionMove.dodgeMove["lightBowGun"]["wire_counter"]
     end
 
-	local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
+	-- local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
     local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
-    local shotState = masterPlayer:call("isLightBowgunTag", shot)
-    if not shotState or not aiming then
+    -- local shotState = masterPlayer:call("isLightBowgunTag", shot)
+    if not ShotState or not aiming then
         return actionMove.dodgeMove["lightBowGun"]["normal"]
     end
     local dir = actionMove.GetLstickDir(masterPlayer)
@@ -332,18 +342,24 @@ end
 
 ---- Player action tracking functions
 
-function actionMove.TrackGreatSwordAction (nodeID)
+function actionMove.TrackGreatSwordAction (masterPlayer, nodeID)
     InitialCharging = (nodeID == 2881805981)
     ContinueCharging = (nodeID == 2575542394) or (nodeID == 2408103841) or (nodeID == 1051964360)
 end
 
-function actionMove.TrackLongSwordAction (nodeID)
+function actionMove.TrackLongSwordAction (masterPlayer, nodeID)
     Iai = (nodeID == 2346527105) or (nodeID == 1498247531)
     -- log.debug(tostring(nodeID))
 end
 
-function actionMove.TrackLightBowgunAction (nodeID)
+function actionMove.TrackLightBowgunAction (masterPlayer, nodeID)
     Step1 = (nodeID == 1731229352) or (nodeID == 1731229350) or (nodeID == 1731229351) or (nodeID == 3999410464)
+    local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
+    ShotState = ShotState or masterPlayer:call("isLightBowgunTag", shot)
+    if nodeID == 2926577812 or nodeID == 280999592 then
+        ShotState = false
+    end
+    log.debug(tostring(ShotState))
 end
 
 ---- Player L Stick Direction

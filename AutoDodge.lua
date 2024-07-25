@@ -62,7 +62,7 @@ function(args)
 	end
     
 	if trackActionFunc ~= nil then
-		trackActionFunc(nodeID)
+		trackActionFunc(masterPlayer, nodeID)
 	end
 	
 	dodgeAction = dodgeActionFunc(masterPlayer)

@@ -29,15 +29,15 @@ function(retval) return retval end
 )
 
 -------------------------------------------------------------------------------------------
--- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
--- function(args)
--- 	if nodeID ~= last_nodeID then
--- 		log.debug("node: " .. tostring(nodeID))
--- 		last_nodeID = nodeID
--- 	end
--- end,
--- function(retval) end
--- )
+sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+function(args)
+	if nodeID ~= last_nodeID then
+		log.debug("node: " .. tostring(nodeID))
+		last_nodeID = nodeID
+	end
+end,
+function(retval) end
+)
 ----------------------------------------------------------------------------------------
 
 
@@ -119,21 +119,21 @@ function(retval) return retval end
 -- function(retval) end
 -- )
 
-sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
-function(args)
--- 	-- replace skill
-	local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
-	local replaceSkillData0 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0))
-	local replaceSkillData1 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1))
-	local replaceSkillData2 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2))
-	local replaceSkillData3 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 3))
-	local replaceSkillData4 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4))
-	local replaceSkillData5 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5))
-	log.debug(tostring(replaceSkillData0..replaceSkillData1..replaceSkillData2..replaceSkillData3..replaceSkillData4..replaceSkillData5))
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
+-- -- 	-- replace skill
+-- 	local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+-- 	local replaceSkillData0 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0))
+-- 	local replaceSkillData1 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1))
+-- 	local replaceSkillData2 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2))
+-- 	local replaceSkillData3 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 3))
+-- 	local replaceSkillData4 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4))
+-- 	local replaceSkillData5 = tostring(replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5))
+-- 	log.debug(tostring(replaceSkillData0..replaceSkillData1..replaceSkillData2..replaceSkillData3..replaceSkillData4..replaceSkillData5))
 
-end,
-function(retval) end
-)
+-- end,
+-- function(retval) end
+-- )
 
 ----------------
 
