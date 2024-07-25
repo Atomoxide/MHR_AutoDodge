@@ -16,6 +16,7 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
+AttackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
 
 local actionMove = require("weaponData.ActionMove")
 actionMove.init()
@@ -30,6 +31,8 @@ DodgeConfig = {
 	wyvernCounter = true,
 	counterShot = true,
 	counterCharge = true,
+	foresight = true,
+	iaiRelease = true,
 }
 
 ---- Load config file
@@ -45,6 +48,8 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.wyvernCounter = file.wyvernCounter
 			DodgeConfig.counterShot = file.counterShot
 			DodgeConfig.counterShot = file.counterCharge
+			DodgeConfig.foresight = file.foresight
+			DodgeConfig.iaiRelease = file.iaiRelease
         end
     end
 end
@@ -60,6 +65,8 @@ local function SaveAutoDodgeConfig()
 		wyvernCounter = DodgeConfig.wyvernCounter,
 		counterShot = DodgeConfig.counterShot,
 		counterCharge = DodgeConfig.counterCharge,
+		foresight = DodgeConfig.foresight,
+		iaiRelease = DodgeConfig.iaiRelease,
     })
 end
 
@@ -193,6 +200,15 @@ re.on_draw_ui(function()
 		changed, DodgeConfig.adamantChargedSlash = imgui.checkbox("Auto-casting Adamant Charged Slash", DodgeConfig.adamantChargedSlash)
 		imgui.spacing()
 		changed, DodgeConfig.tackle = imgui.checkbox("Auto Tackle during Charging", DodgeConfig.tackle)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Long Sword:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.foresight = imgui.checkbox("Auto-casting Foresight Slash", DodgeConfig.foresight)
+		imgui.spacing()
+		changed, DodgeConfig.iaiRelease = imgui.checkbox("Auto Iai Release", DodgeConfig.iaiRelease)
         imgui.unindent(25)
 		imgui.spacing()
 

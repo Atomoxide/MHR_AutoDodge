@@ -30,7 +30,8 @@ function actionMove.init()
         },
         ["longSword"] = {
             ["normal"] = 1731229352,
-            ["iai"] = 662313942
+            ["iai_release"] = 662313942,
+            ["foresight"] = 1265650183,
         },
         ["dualBlades"] = {
             ["normal"] = 1731229352,
@@ -283,11 +284,17 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 end
 
 function actionMove.GetLongSwordDodgeMove (masterPlayer)
-    if Iai then
-        return actionMove.dodgeMove["longSword"]["iai"]
+    if Iai and DodgeConfig.iaiRelease then
+        return actionMove.dodgeMove["longSword"]["iai_release"]
     else
+        local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
+        if isAttack then
+            return actionMove.dodgeMove["longSword"]["foresight"]
+        end
         return actionMove.dodgeMove["longSword"]["normal"]
     end
+    
+    
 end
 
 function actionMove.GetLightBowgunDodgeMove (masterPlayer)
