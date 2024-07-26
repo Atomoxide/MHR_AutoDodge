@@ -33,6 +33,8 @@ DodgeConfig = {
 	counterCharge = true,
 	foresight = true,
 	iaiRelease = true,
+	serenePose = true,
+	spiritBlade = true,
 }
 
 ---- Load config file
@@ -50,6 +52,8 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.counterShot = file.counterCharge
 			DodgeConfig.foresight = file.foresight
 			DodgeConfig.iaiRelease = file.iaiRelease
+			DodgeConfig.serenePose = file.serenePose
+			DodgeConfig.spiritBlade = file.spiritBlade
         end
     end
 end
@@ -67,6 +71,8 @@ local function SaveAutoDodgeConfig()
 		counterCharge = DodgeConfig.counterCharge,
 		foresight = DodgeConfig.foresight,
 		iaiRelease = DodgeConfig.iaiRelease,
+		serenePose = DodgeConfig.serenePose,
+		spiritBlade = DodgeConfig.spiritBlade,
     })
 end
 
@@ -209,6 +215,10 @@ re.on_draw_ui(function()
         changed, DodgeConfig.foresight = imgui.checkbox("Auto-casting Foresight Slash", DodgeConfig.foresight)
 		imgui.spacing()
 		changed, DodgeConfig.iaiRelease = imgui.checkbox("Auto Iai Release", DodgeConfig.iaiRelease)
+		imgui.spacing()
+		changed, DodgeConfig.serenePose = imgui.checkbox("Auto-casting Serene Pose (only at Max Spirit Gauge)", DodgeConfig.serenePose)
+		imgui.spacing()
+		changed, DodgeConfig.spiritBlade = imgui.checkbox("Auto-casting Spirit Blade", DodgeConfig.spiritBlade)
         imgui.unindent(25)
 		imgui.spacing()
 

@@ -1,6 +1,10 @@
 local actionMove = {}
 
 function actionMove.init()
+    LongSwordMaxSpirit = sdk.find_type_definition("snow.player.LongSword.LongSwordKijin"):get_field("LvMax"):get_data(nil)
+    DualBladeNormal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
+	DualBladeKijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
+    DualBladeKijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
     actionMove.weaponType = {
         [0] = "greatSword",
         [1] = "slashAxe", -- aka switch axe
@@ -32,6 +36,8 @@ function actionMove.init()
             ["normal"] = 1731229352,
             ["iai_release"] = 662313942,
             ["foresight"] = 1265650183,
+            ["serene_pose"] = 276632468,
+            ["spirit_blade"] = 3756441082,
         },
         ["dualBlades"] = {
             ["normal"] = 1731229352,
@@ -103,9 +109,10 @@ function actionMove.init()
             [1148884139] = true, -- adamant charge
         },
         ["longSword"] = {
-            [276632468] = true, -- saya
+            [276632468] = true, -- serene pose
             [1265650183] = true, -- foresight
             [511268291] = true, -- missed foresight
+            [3756441082] = true, -- spirit blade
             -- [2346527105] = true, -- iai stage 1 (bell ring)
             -- [1498247531] = true, -- iai stage 2 (after ring)
         },
@@ -141,7 +148,7 @@ function actionMove.init()
             [2542821223] = true, -- adamant_charged continuation
         },
         ["longSword"] = {
-            [1261730324] = true, -- saya activated
+            [1261730324] = true, -- serene pose activated
             -- [49282411] = true, -- missed foresight ends
             -- [662313942] = true, -- iai
         },
@@ -239,9 +246,6 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer)
 end
 
 function actionMove.GetDualBladesDodgeMove (masterPlayer)
-    local normal
-	local kijin
-    local kijinJyuu
     local state
     local shroudedVaultDodge = false
     if DodgeConfig.shroudedVault then
@@ -251,19 +255,17 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
         shroudedVaultDodge = (replaceSkillData == 0) and (wireNum >= 1)
         -- log.debug(tostring(shroudedVaultDodge))
     end
-	normal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
-	kijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
-    kijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
+	
     state = masterPlayer:call("get_DBState")
 	local kijinState = masterPlayer:call("isKijinKyouka")
     if shroudedVaultDodge then
         if kijinState then
             return actionMove.dodgeMove["dualBlades"]["kijin_kyouka_vault"]
-        elseif state == kijin then
+        elseif state == DualBladeKijin then
             return actionMove.dodgeMove["dualBlades"]["kijin_vault"]
-        elseif state == kijinJyuu then
+        elseif state == DualBladeKijinJyuu then
             return actionMove.dodgeMove["dualBlades"]["kijin_jyuu_vault"]
-        elseif state == normal then
+        elseif state == DualBladeNormal then
             return actionMove.dodgeMove["dualBlades"]["normal_vault"]
         else
             return actionMove.dodgeMove["dualBlades"]["normal_vault"]
@@ -271,11 +273,11 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
     else
         if kijinState then
             return actionMove.dodgeMove["dualBlades"]["kijin_kyouka"]
-        elseif state == kijin then
+        elseif state == DualBladeKijin then
             return actionMove.dodgeMove["dualBlades"]["kijin"]
-        elseif state == kijinJyuu then
+        elseif state == DualBladeKijinJyuu then
             return actionMove.dodgeMove["dualBlades"]["kijin_jyuu"]
-        elseif state == normal then
+        elseif state == DualBladeNormal then
             return actionMove.dodgeMove["dualBlades"]["normal"]
         else
             return actionMove.dodgeMove["dualBlades"]["normal"]
@@ -284,6 +286,18 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 end
 
 function actionMove.GetLongSwordDodgeMove (masterPlayer)
+    if DodgeConfig.serenePose or DodgeConfig.spiritBlade then
+        local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+        local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
+        local replaceSkillData5 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
+        local wireNum = masterPlayer:getUsableHunterWireNum()
+        local spiritGauge = masterPlayer:get_LongSwordGaugeLv()
+        if DodgeConfig.serenePose and replaceSkillData5 == 0 and wireNum >= 2 and spiritGauge == LongSwordMaxSpirit then
+            return actionMove.dodgeMove["longSword"]["serene_pose"]
+        elseif DodgeConfig.spiritBlade and replaceSkillData4 == 1 and wireNum >= 1 then
+            return actionMove.dodgeMove["longSword"]["spirit_blade"]
+        end
+    end
     if Iai and DodgeConfig.iaiRelease then
         return actionMove.dodgeMove["longSword"]["iai_release"]
     else

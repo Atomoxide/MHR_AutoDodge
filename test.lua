@@ -30,15 +30,15 @@ function(retval) return retval end
 )
 
 -------------------------------------------------------------------------------------------
--- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
--- function(args)
--- 	if nodeID ~= last_nodeID then
--- 		log.debug("node: " .. tostring(nodeID))
--- 		last_nodeID = nodeID
--- 	end
--- end,
--- function(retval) end
--- )
+sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+function(args)
+	if nodeID ~= last_nodeID then
+		log.debug("node: " .. tostring(nodeID))
+		last_nodeID = nodeID
+	end
+end,
+function(retval) end
+)
 ----------------------------------------------------------------------------------------
 
 
@@ -143,8 +143,8 @@ function(retval) return retval end
 ----------------
 
 -- Check Player current Status
-sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
-function(args)
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
 
 -- 	if not masterPlayer then return end
 
@@ -164,14 +164,14 @@ function(args)
 -- 	local isWireJump = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", wireJumpStateTag)
 -- local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
 -- 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
--- 	local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
-local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", attackStateTag)
+	-- local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
+-- local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", attackStateTag)
 
-if isAttack then
-	log.debug("yes")
-else
-	log.debug("no")
-end
+-- if isGuard then
+-- 	log.debug("yes")
+-- else
+-- 	log.debug("no")
+-- end
 
 -- 	if isJump or isWireJump or isEscape or isDamage then
 -- 		dodgeReady = false
@@ -230,9 +230,9 @@ end
 	
 -- 	log.debug(tostring(lbgState))
 	
-end,
-function(retval) return retval end
-)
+-- end,
+-- function(retval) return retval end
+-- )
 
 
 
