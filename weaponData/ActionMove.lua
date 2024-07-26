@@ -286,7 +286,7 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 end
 
 function actionMove.GetLongSwordDodgeMove (masterPlayer)
-    if DodgeConfig.serenePose or DodgeConfig.spiritBlade then
+    if (DodgeConfig.serenePose or DodgeConfig.spiritBlade) and not Iai then
         local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
         local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
         local replaceSkillData5 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
