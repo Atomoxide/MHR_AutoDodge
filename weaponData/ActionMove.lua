@@ -110,8 +110,8 @@ function actionMove.init()
         },
         ["longSword"] = {
             [276632468] = true, -- serene pose
-            [1265650183] = true, -- foresight
-            [511268291] = true, -- missed foresight
+            -- [1265650183] = true, -- foresight
+            -- [511268291] = true, -- missed foresight
             [3756441082] = true, -- spirit blade
             -- [2346527105] = true, -- iai stage 1 (bell ring)
             -- [1498247531] = true, -- iai stage 2 (after ring)
