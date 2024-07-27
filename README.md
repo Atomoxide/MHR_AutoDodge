@@ -76,7 +76,7 @@ The following features are configurable (turn on/off) with in the in-game REFram
   - auto casting Counter Charge
 - Bow
   - 
-  - auto dodging
+  - auto dodging/charged sliding/dodgebolt
 
 ## Acknowledgment
 This project is inspired by this mod (https://www.nexusmods.com/monsterhunterrise/mods/2225)
