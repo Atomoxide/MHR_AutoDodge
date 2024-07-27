@@ -98,6 +98,17 @@ function actionMove.init()
         ["gunLance"] = {
             ["normal"] = 1731229352
         },
+        ["bow"] = {
+            ["normal"] = 1731229352,
+            ["up_slide"] = 1085093222,
+            ["down_slide"] = 2355006144,
+            ["right_slide"] = 2183383014,
+            ["left_slide"] = 2475175616,
+            ["up_dodgebolt"] = 3705732986,
+            ["down_dodgebolt"] = 1704832922,
+            ["right_dodgebolt"] = 34212903,
+            ["left_dodgebolt"] = 1440439516,
+        }
     }
 
     actionMove.dodgeLockMove = {
@@ -139,6 +150,7 @@ function actionMove.init()
         ["chargeAxe"] = {},
         ["lance"] = {},
         ["gunLance"] = {},
+        ["bow"] = {},
     }
 
     actionMove.dodgeKeepLockMove = {
@@ -170,6 +182,7 @@ function actionMove.init()
         ["chargeAxe"] = {},
         ["lance"] = {},
         ["gunLance"] = {},
+        ["bow"] = {},
     }
 
     actionMove.getDodgeMoveFuncs = {
@@ -186,6 +199,7 @@ function actionMove.init()
         ["chargeAxe"] = actionMove.GetChargeAxeDodgeMove,
         ["lance"] = actionMove.GetGeneralDodgeMove,
         ["gunLance"] = actionMove.GetGeneralDodgeMove,
+        ["bow"] = actionMove.GetBowDodgeMove,
     }
 
     actionMove.getTrackActionFuncs = {
@@ -202,6 +216,7 @@ function actionMove.init()
         ["chargeAxe"] = nil,
         ["lance"] = nil,
         ["gunLance"] = nil,
+        ["bow"] = actionMove.TrackBowAction,
     }
 
     actionMove.weaponOffExceptions = {
@@ -371,6 +386,31 @@ function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
     end
 end
 
+function actionMove.GetBowDodgeMove (masterPlayer)
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
+    local dir = actionMove.GetLstickDir(masterPlayer)
+    if BowAiming then
+        -- log.debug("aiming mode")
+        if replaceSkillData1 == 0 then
+            return actionMove.dodgeMove["bow"][dir.."_slide"]
+        else
+            return actionMove.dodgeMove["bow"][dir.."_dodgebolt"]
+        end
+    end
+    local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
+    if isAttack then
+        -- log.debug("attacking")
+        if replaceSkillData1 == 0 then
+            return actionMove.dodgeMove["bow"][dir.."_slide"]
+        else
+            return actionMove.dodgeMove["bow"][dir.."_dodgebolt"]
+        end
+    end
+    -- log.debug("normal")
+    return actionMove.dodgeMove["bow"]["normal"]
+end
+
 function actionMove.GetSlashAxeDodgeMove (masterPlayer)
     local sword
     local state
@@ -435,6 +475,14 @@ function actionMove.TrackHeavyBowgunAction (masterPlayer, nodeID)
         ShotState = false
     end
     
+end
+
+function actionMove.TrackBowAction (masterPlayer, nodeID)
+    if nodeID == 2324425078 or nodeID == 2324425079 or nodeID == 4102615523 or nodeID == 2451015056 then
+        BowAiming = true
+    elseif nodeID == 3738870336 or nodeID ==  1564395738 then
+        BowAiming = false
+    end
 end
 
 ---- Player L Stick Direction

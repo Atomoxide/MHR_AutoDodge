@@ -5,6 +5,7 @@ local action_id
 local last_id
 local userArmature
 local nodeID, last_nodeID
+local player, playerData
 local enableDodge = false
 local jumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Jump"):get_data(nil)
 local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("WireJump"):get_data(nil)
@@ -25,6 +26,8 @@ function(args)
 	masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
 	userArmature = masterPlayer:getMotionFsm2() -- via.motion.MotionFsm2
 	nodeID = userArmature:getCurrentNodeID(0) -- System.UInt64
+	player = playerManager:getPlayer(masterPlayerIndex)
+	playerData = player:get_PlayerData()
 end,
 function(retval) return retval end
 )
@@ -32,10 +35,24 @@ function(retval) return retval end
 -------------------------------------------------------------------------------------------
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 function(args)
+	local motionControl = sdk.to_managed_object(args[2])
+	-- if curPlayerIndex == masterPlayerIndex then
+	-- 	action_id = motionControl:get_field("_OldMotionID")
+	-- 	-- action_bank_id = motionControl:get_field("_OldBankID")
+	-- end
+	-- if action_id ~= last_id then
+    --     log.debug("action" .. tostring(action_id))
+    --     last_id = action_id
+    -- end
 	if nodeID ~= last_nodeID then
 		log.debug("node: " .. tostring(nodeID))
 		last_nodeID = nodeID
 	end
+	-- local maxStamina = playerData:get_field("_staminaMax")
+	-- playerData:set_field("_stamina", maxStamina)
+	-- local stamina = playerData:get_field("_stamina")
+	-- log.debug(tostring(stamina))
+
 end,
 function(retval) end
 )
@@ -234,7 +251,16 @@ function(retval) end
 -- function(retval) return retval end
 -- )
 
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
+-- 	-- local motionType = masterPlayer:call("get_IsCharging")
+-- 	-- log.debug(tostring(motionType))
+-- 	local isInState = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", attackStateTag)
+-- 	log.debug(tostring(isInState))
 
+-- end,
+-- function(retval) return retval end
+-- )
 
 -- re.on_frame(function()
 -- 	if not PlayerManager then
