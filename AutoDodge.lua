@@ -10,7 +10,7 @@ local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_fie
 local rideStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Ride"):get_data(nil)
 local guardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
 local masterPlayerBehaviorTree
-local dmgOwnerType, curPlayerIndex
+local isFromEnemy, curPlayerIndex, masterPlayerDamage
 local dodgeAction
 local dodgeLock = false
 local weaponType
@@ -137,15 +137,17 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 		local manager = sdk.to_managed_object(args[2])	
 		local argManager = sdk.to_managed_object(args[3])
 		local damageData = argManager:call("get_AttackData")
-		
-		dmgOwnerType = damageData:call("get_OwnerType")
-		curPlayerIndex = manager:get_field("_PlayerIndex")
 		masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
+		masterPlayerDamage = masterPlayerIndex == manager:get_field("_PlayerIndex")
+
+		isFromEnemy = damageData:call("get_OwnerType") == 1
+		-- curPlayerIndex = manager:get_field("_PlayerIndex")
+		
         -- log.debug("Damage detected")
 	end,
     function(retval)
-		local dmgFlowType = sdk.to_int64(retval)
-		if curPlayerIndex == masterPlayerIndex and dmgOwnerType == 1 and dmgFlowType == 0 then
+		local isHit = sdk.to_int64(retval) == 0
+		if masterPlayerDamage and isFromEnemy and isHit then
 			if dodgeReady and (dodgeAction ~= nil) then
 				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
 				return sdk.to_ptr(1)
