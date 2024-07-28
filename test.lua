@@ -15,6 +15,7 @@ local guardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_fiel
 local rideStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Ride"):get_data(nil)
 local attackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
 local dmgOwnerType, curPlayerIndex
+local masterPlayerBehaviorTree
 
 ---- Hook player info
 local playerInputHook = sdk.find_type_definition("snow.player.PlayerInput"):get_method("initCommandInfo()")
@@ -28,34 +29,36 @@ function(args)
 	nodeID = userArmature:getCurrentNodeID(0) -- System.UInt64
 	player = playerManager:getPlayer(masterPlayerIndex)
 	playerData = player:get_PlayerData()
+	local masterPlayerGameObject = masterPlayer:call("get_GameObject") -- via.GameObject
+	masterPlayerBehaviorTree = masterPlayerGameObject:call("getComponent(System.Type)",sdk.typeof("via.behaviortree.BehaviorTree"))
 end,
 function(retval) return retval end
 )
 
 -------------------------------------------------------------------------------------------
--- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
--- function(args)
--- 	local motionControl = sdk.to_managed_object(args[2])
--- 	-- if curPlayerIndex == masterPlayerIndex then
--- 	-- 	action_id = motionControl:get_field("_OldMotionID")
--- 	-- 	-- action_bank_id = motionControl:get_field("_OldBankID")
--- 	-- end
--- 	-- if action_id ~= last_id then
---     --     log.debug("action" .. tostring(action_id))
---     --     last_id = action_id
---     -- end
--- 	if nodeID ~= last_nodeID then
--- 		log.debug("node: " .. tostring(nodeID))
--- 		last_nodeID = nodeID
--- 	end
--- 	-- local maxStamina = playerData:get_field("_staminaMax")
--- 	-- playerData:set_field("_stamina", maxStamina)
--- 	-- local stamina = playerData:get_field("_stamina")
--- 	-- log.debug(tostring(stamina))
+sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+function(args)
+	local motionControl = sdk.to_managed_object(args[2])
+	-- if curPlayerIndex == masterPlayerIndex then
+	-- 	action_id = motionControl:get_field("_OldMotionID")
+	-- 	-- action_bank_id = motionControl:get_field("_OldBankID")
+	-- end
+	-- if action_id ~= last_id then
+    --     log.debug("action" .. tostring(action_id))
+    --     last_id = action_id
+    -- end
+	if nodeID ~= last_nodeID then
+		log.debug("node: " .. tostring(nodeID))
+		last_nodeID = nodeID
+	end
+	-- local maxStamina = playerData:get_field("_staminaMax")
+	-- playerData:set_field("_stamina", maxStamina)
+	-- local stamina = playerData:get_field("_stamina")
+	-- log.debug(tostring(stamina))
 
--- end,
--- function(retval) end
--- )
+end,
+function(retval) end
+)
 ----------------------------------------------------------------------------------------
 
 
@@ -100,37 +103,50 @@ function(retval) return retval end
 -- end
 -- )
 
-sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("checkCalcDamage_DamageSide"),
-	function(args)
-		log.debug("ord")
-		-- local manager = sdk.to_managed_object(args[2])	
-		-- local argManager = sdk.to_managed_object(args[3])
-		-- local damageData = argManager:call("get_AttackData")
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("checkCalcDamage_DamageSide"),
+-- 	function(args)
+-- 		-- log.debug("ord")
+-- 		-- masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",3224744091,nil,nil)
+-- 		-- local manager = sdk.to_managed_object(args[2])	
+-- 		local argManager = sdk.to_managed_object(args[3])
+-- 		-- local damageData = argManager:call("get_AttackData")
+-- 		local RSData = argManager:call("get_DamageRSData")
 		
-		-- dmgOwnerType = damageData:call("get_OwnerType")
-		-- curPlayerIndex = manager:get_field("_PlayerIndex")
-		-- masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
-        -- log.debug("Damage detected")
-	end,
-    function(retval)
-		-- local dmgFlowType = sdk.to_int64(retval)
-		-- -- if curPlayerIndex == masterPlayerIndex and dmgOwnerType == 1 and dmgFlowType == 0 then
-		-- if curPlayerIndex == masterPlayerIndex then
-		-- 	log.debug(tostring(dmgFlowType) .. " " .. tostring(dmgOwnerType))
-		-- 	return retval
-		-- end
-		return retval
-	end
-)
+-- 		-- dmgOwnerType = damageData:call("get_OwnerType")
+-- 		-- curPlayerIndex = manager:get_field("_PlayerIndex")
+-- 		-- masterPlayerIndex = masterPlayer:get_field("_PlayerIndex")
+-- 		-- if curPlayerIndex == masterPlayer then
+-- 		-- 	log.debug("here")
+-- 		-- 	masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",3224744091,nil,nil)
+-- 		-- end
+--         log.debug(tostring(RSData:call("get_Damage")))
+-- 	end,
+--     function(retval)
+-- 		-- local dmgFlowType = sdk.to_int64(retval)
+-- 		-- -- if curPlayerIndex == masterPlayerIndex and dmgOwnerType == 1 and dmgFlowType == 0 then
+-- 		-- if curPlayerIndex == masterPlayerIndex then
+-- 		-- 	log.debug(tostring(dmgFlowType) .. " " .. tostring(dmgOwnerType))
+-- 		-- 	return retval
+-- 		-- end
+-- 		return retval
+-- 	end
+-- )
 
-sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("preCalcDamage_DamageSide"),
-function(args)
-	log.debug("pre")
-end,
-function(retval)
-	return retval
-end
-)
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("preCalcDamage_DamageSide"),
+-- function(args)
+-- 	local argManager = sdk.to_managed_object(args[3])
+-- 	-- local damageData = argManager:call("get_AttackData")
+-- 	local RSData = argManager:call("get_DamageRSData")
+-- 	log.debug(tostring(RSData:call("get_Damage")))
+-- 	-- log.debug("pre")
+-- 	-- masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",3224744091,nil,nil)
+-- end,
+-- function(retval)
+-- 	log.debug("suff")
+	
+-- 	return retval
+-- end
+-- )
 
 -- show action node id
 -- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
@@ -279,6 +295,18 @@ end
 -- 	-- local motionType = masterPlayer:call("get_IsCharging")
 -- 	-- log.debug(tostring(motionType))
 -- 	local isInState = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", attackStateTag)
+-- 	log.debug(tostring(isInState))
+
+-- end,
+-- function(retval) return retval end
+-- )
+
+-- Check Player current Status
+-- sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
+-- function(args)
+-- 	-- local motionType = masterPlayer:call("get_IsCharging")
+-- 	-- log.debug(tostring(motionType))
+-- 	local isInState = masterPlayer:call("getDamageChargeSindo")
 -- 	log.debug(tostring(isInState))
 
 -- end,

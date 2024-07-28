@@ -8,9 +8,9 @@ local wireJumpStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_f
 local escapeStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Escape"):get_data(nil)
 local damageStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Damage"):get_data(nil)
 local rideStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Ride"):get_data(nil)
-local guardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
+-- local guardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
 local masterPlayerBehaviorTree
-local isFromEnemy, curPlayerIndex, masterPlayerDamage
+local isFromEnemy, masterPlayerDamage
 local dodgeAction
 local dodgeLock = false
 local weaponType
@@ -35,6 +35,8 @@ DodgeConfig = {
 	iaiRelease = true,
 	serenePose = true,
 	spiritBlade = true,
+	counterPeakPerforamce = true,
+	autoGuardPoints = true,
 }
 
 ---- Load config file
@@ -54,6 +56,8 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.iaiRelease = file.iaiRelease
 			DodgeConfig.serenePose = file.serenePose
 			DodgeConfig.spiritBlade = file.spiritBlade
+			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
+			DodgeConfig.autoGuardPoints = file.autoGuardPoints
         end
     end
 end
@@ -73,6 +77,8 @@ local function SaveAutoDodgeConfig()
 		iaiRelease = DodgeConfig.iaiRelease,
 		serenePose = DodgeConfig.serenePose,
 		spiritBlade = DodgeConfig.spiritBlade,
+		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
+		autoGuardPoints = DodgeConfig.autoGuardPoints,
     })
 end
 
@@ -91,8 +97,8 @@ function(args)
 	local isEscape = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", escapeStateTag)
 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
 	local isRide = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", rideStateTag)
-	local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
-	local dodgeDisabled = isJump or isWireJump or isEscape or isDamage or isRide or isGuard
+	-- local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
+	local dodgeDisabled = isJump or isWireJump or isEscape or isDamage or isRide
 	-- log.debug(tostring(dodgeDisabled))
 
 	---- check is weapon drawn
@@ -244,6 +250,15 @@ re.on_draw_ui(function()
         changed, DodgeConfig.counterShot = imgui.checkbox("Auto-casting Counter Shot", DodgeConfig.counterShot)
 		imgui.spacing()
 		changed, DodgeConfig.counterCharge = imgui.checkbox("Auto-casting Counter Charge", DodgeConfig.counterCharge)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Charge Blade:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.counterPeakPerforamce = imgui.checkbox("Auto-casting Counter Peak Performance", DodgeConfig.counterPeakPerforamce)
+		imgui.spacing()
+		changed, DodgeConfig.autoGuardPoints = imgui.checkbox("Auto morph to gain Guard Points (when guarding under sword mode)", DodgeConfig.autoGuardPoints)
         imgui.unindent(25)
 		imgui.spacing()
         if changed then SaveAutoDodgeConfig() end

@@ -1,6 +1,7 @@
 local actionMove = {}
 
 function actionMove.init()
+    GuardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
     LongSwordMaxSpirit = sdk.find_type_definition("snow.player.LongSword.LongSwordKijin"):get_field("LvMax"):get_data(nil)
     DualBladeNormal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	DualBladeKijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
@@ -90,7 +91,11 @@ function actionMove.init()
         },
         ["chargeAxe"] = {
             ["normal"] = 1731229352,
-            ["axe"] = 3940639656
+            ["axe"] = 3940639656,
+            ["normal_counter"] = 2842504719,
+            ["axe_counter"] = 1460612556,
+            ["normal_morph_slash"] = 3224744091,
+            ["counter_morph_slash"] = 3760447530,
         },
         ["lance"] = {
             ["normal"] = 1731229352
@@ -147,7 +152,12 @@ function actionMove.init()
         ["shortSword"] = {},
         ["insectGlaive"] = {},
         ["slashAxe"] = {},
-        ["chargeAxe"] = {},
+        ["chargeAxe"] = {
+            [2180283493] = true, -- silk normal guard
+            [268149429] = true, -- silk axe guard
+            [2842504719] = true, -- normal counter
+            [1460612556] = true, -- axe counter
+        },
         ["lance"] = {},
         ["gunLance"] = {},
         ["bow"] = {},
@@ -235,6 +245,9 @@ function actionMove.GetGeneralDodgeMove (masterPlayer)
 end
 
 function actionMove.GetGreatSwordDodgeMove (masterPlayer)
+    if masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag) then
+        return nil
+    end
     if not (InitialCharging or ContinueCharging) then
         return actionMove.dodgeMove["greatSword"]["normal"]
     end
@@ -424,13 +437,39 @@ function actionMove.GetSlashAxeDodgeMove (masterPlayer)
 end
 
 function actionMove.GetChargeAxeDodgeMove (masterPlayer)
+    if masterPlayer:get_field("_GuardPoint") then
+        return nil
+    end
     local axe
     local state
+    local wireNum = masterPlayer:getUsableHunterWireNum()
+    local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local counterEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) == 0 
+            and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 0 
+            and wireNum >= 1
+            and DodgeConfig.counterPeakPerforamce
+    local counterMorphEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1) == 1
 	axe = sdk.find_type_definition("snow.player.ChargeAxe.WeaponMode"):get_field("Axe"):get_data(nil)
     state = masterPlayer:call("get_Mode")
+    if isGuard and not DodgeConfig.autoGuardPoints then
+        return nil
+    end
+    if isGuard  then
+        if counterMorphEquipped then 
+            return actionMove.dodgeMove["chargeAxe"]["counter_morph_slash"]
+        end
+        return actionMove.dodgeMove["chargeAxe"]["normal_morph_slash"]
+    end
     if state == axe then
+        if counterEquipped then
+            return actionMove.dodgeMove["chargeAxe"]["axe_counter"]
+        end
         return actionMove.dodgeMove["chargeAxe"]["axe"]
     else
+        if counterEquipped then
+            return actionMove.dodgeMove["chargeAxe"]["normal_counter"]
+        end
         return actionMove.dodgeMove["chargeAxe"]["normal"]
     end
 end
