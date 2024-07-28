@@ -62,10 +62,13 @@ function actionMove.init()
             ["counter_charge"] = 3013461642,
         },
         ["hammer"] = {
-            ["normal"] = 1731229352
+            ["normal"] = 1731229352,
+            ["water_strike"] = 265605206,
         },
         ["shortSword"] = {
-            ["normal"] = 1731229352
+            ["normal"] = 1731229352,
+            ["windmill"] = 3012216100,
+            ["guard_slash"] = 1622021678,
         },
         ["insectGlaive"] = {
             ["normal"] = 1731229352
@@ -148,10 +151,19 @@ function actionMove.init()
             -- [929939138] = true, 
             -- [2317440567] = true, -- reload: slow
         },
-        ["hammer"] = {},
-        ["shortSword"] = {},
+        ["hammer"] = {
+            [265605206] = true, -- water_strike
+        },
+        ["shortSword"] = {
+            [3012216100] = true, -- windmill
+            [2477991369] = true, -- Metsu Shoryugeki
+            [1622021678] = true, -- guard slash
+        },
         ["insectGlaive"] = {},
-        ["slashAxe"] = {},
+        ["slashAxe"] = {
+            [2777648365] = true, -- Compressed Finishing Discharge
+            [2872321796] = true, -- Invincible Gambit
+        },
         ["chargeAxe"] = {
             [2180283493] = true, -- silk normal guard
             [268149429] = true, -- silk axe guard
@@ -185,7 +197,9 @@ function actionMove.init()
             [335808431] = true, -- counter charge activated
         },
         ["lightBowgun"] = {},
-        ["hammer"] = {},
+        ["hammer"] = {
+            [1162063468] = true, -- water_strike continuation
+        },
         ["shortSword"] = {},
         ["insectGlaive"] = {},
         ["slashAxe"] = {},
@@ -203,7 +217,7 @@ function actionMove.init()
         ["heavyBowgun"] = actionMove.GetHeavyBowgunDodgeMove,
         ["lightBowgun"] = actionMove.GetLightBowgunDodgeMove,
         ["hammer"] = actionMove.GetGeneralDodgeMove,
-        ["shortSword"] = actionMove.GetGeneralDodgeMove,
+        ["shortSword"] = actionMove.GetShortSwordDodgeMove,
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
         ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
         ["chargeAxe"] = actionMove.GetChargeAxeDodgeMove,
@@ -473,6 +487,36 @@ function actionMove.GetChargeAxeDodgeMove (masterPlayer)
         return actionMove.dodgeMove["chargeAxe"]["normal"]
     end
 end
+
+function actionMove.GetShortSwordDodgeMove (masterPlayer)
+    local wireNum = masterPlayer:getUsableHunterWireNum()
+    local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
+    if isGuard and not DodgeConfig.guardSlash then
+        return nil
+    end
+    if isGuard  then
+        return actionMove.dodgeMove["shortSword"]["guard_slash"]
+    end
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local windMillEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) == 0 
+            and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 0 
+            and wireNum >= 2
+            and DodgeConfig.windmill
+    if windMillEquipped then
+        return actionMove.dodgeMove["shortSword"]["windmill"]
+    end
+    return actionMove.dodgeMove["shortSword"]["normal"]
+end
+
+------- Glitched, do not use-----------------
+-- function actionMove.GetHammerDodgeMove (masterPlayer)
+--     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+--     local waterStrikeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
+--     if waterStrikeEquipped then
+--         return actionMove.dodgeMove["hammer"]["water_strike"]
+--     end
+--     return actionMove.dodgeMove["hammer"]["normal"]
+-- end
 
 
 ---- Player action tracking functions

@@ -24,19 +24,21 @@ actionMove.init()
 ---- config
 
 DodgeConfig = {
-	enabled = true,
-	shroudedVault = true,
-	adamantChargedSlash = true,
-	tackle = true,
-	wyvernCounter = true,
-	counterShot = true,
-	counterCharge = true,
-	foresight = true,
-	iaiRelease = true,
-	serenePose = true,
-	spiritBlade = true,
-	counterPeakPerforamce = true,
-	autoGuardPoints = true,
+	enabled = true, -- general
+	shroudedVault = true, -- DB
+	adamantChargedSlash = true, -- GS
+	tackle = true, -- GS
+	wyvernCounter = true, -- LBG
+	counterShot = true, -- HBG
+	counterCharge = true, -- HBG
+	foresight = true, -- LS
+	iaiRelease = true, -- LS
+	serenePose = true, -- LS
+	spiritBlade = true, -- LS
+	counterPeakPerforamce = true, -- CB
+	autoGuardPoints = true, -- CB
+	windmill = true, -- SS
+	guardSlash = true, -- SS
 }
 
 ---- Load config file
@@ -58,6 +60,8 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.spiritBlade = file.spiritBlade
 			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
+			DodgeConfig.windmill = file.windmill
+			DodgeConfig.guardSlash = file.windmill
         end
     end
 end
@@ -79,6 +83,8 @@ local function SaveAutoDodgeConfig()
 		spiritBlade = DodgeConfig.spiritBlade,
 		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
+		windmill = DodgeConfig.windmill,
+		guardSlash = DodgeConfig.windmill,
     })
 end
 
@@ -259,6 +265,15 @@ re.on_draw_ui(function()
         changed, DodgeConfig.counterPeakPerforamce = imgui.checkbox("Auto-casting Counter Peak Performance", DodgeConfig.counterPeakPerforamce)
 		imgui.spacing()
 		changed, DodgeConfig.autoGuardPoints = imgui.checkbox("Auto morph to gain Guard Points (when guarding under sword mode)", DodgeConfig.autoGuardPoints)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Sword & Shield:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.windmill = imgui.checkbox("Auto-casting Windmill to counter damage", DodgeConfig.windmill)
+		imgui.spacing()
+		changed, DodgeConfig.guardSlash = imgui.checkbox("Auto-casting Guard Slash (when guarding)", DodgeConfig.guardSlash)
         imgui.unindent(25)
 		imgui.spacing()
         if changed then SaveAutoDodgeConfig() end
