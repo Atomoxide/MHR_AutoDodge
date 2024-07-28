@@ -39,6 +39,7 @@ DodgeConfig = {
 	autoGuardPoints = true, -- CB
 	windmill = true, -- SS
 	guardSlash = true, -- SS
+	guardEdge = true, -- GL
 }
 
 ---- Load config file
@@ -62,6 +63,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
 			DodgeConfig.windmill = file.windmill
 			DodgeConfig.guardSlash = file.windmill
+			DodgeConfig.guardEdge = file.guardEdge
         end
     end
 end
@@ -85,6 +87,7 @@ local function SaveAutoDodgeConfig()
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
 		windmill = DodgeConfig.windmill,
 		guardSlash = DodgeConfig.windmill,
+		guardEdge = DodgeConfig.guardEdge,
     })
 end
 
@@ -264,7 +267,7 @@ re.on_draw_ui(function()
 		imgui.indent(25)
         changed, DodgeConfig.counterPeakPerforamce = imgui.checkbox("Auto-casting Counter Peak Performance", DodgeConfig.counterPeakPerforamce)
 		imgui.spacing()
-		changed, DodgeConfig.autoGuardPoints = imgui.checkbox("Auto morph to gain Guard Points (when guarding under sword mode)", DodgeConfig.autoGuardPoints)
+		changed, DodgeConfig.autoGuardPoints = imgui.checkbox("Auto morph to gain Guard Points (when player is guarding under sword mode)", DodgeConfig.autoGuardPoints)
         imgui.unindent(25)
 		imgui.spacing()
 
@@ -273,7 +276,14 @@ re.on_draw_ui(function()
 		imgui.indent(25)
         changed, DodgeConfig.windmill = imgui.checkbox("Auto-casting Windmill to counter damage", DodgeConfig.windmill)
 		imgui.spacing()
-		changed, DodgeConfig.guardSlash = imgui.checkbox("Auto-casting Guard Slash (when guarding)", DodgeConfig.guardSlash)
+		changed, DodgeConfig.guardSlash = imgui.checkbox("Auto-casting Guard Slash (when player is guarding)", DodgeConfig.guardSlash)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Gunlance:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.guardEdge = imgui.checkbox("Auto-casting Guard Edge (when player is guarding)", DodgeConfig.guardEdge)
         imgui.unindent(25)
 		imgui.spacing()
         if changed then SaveAutoDodgeConfig() end

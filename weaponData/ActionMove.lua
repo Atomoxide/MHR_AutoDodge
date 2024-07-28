@@ -104,7 +104,8 @@ function actionMove.init()
             ["normal"] = 1731229352
         },
         ["gunLance"] = {
-            ["normal"] = 1731229352
+            ["normal"] = 1731229352,
+            ["guard_edge"] = 1320170169,
         },
         ["bow"] = {
             ["normal"] = 1731229352,
@@ -171,7 +172,9 @@ function actionMove.init()
             [1460612556] = true, -- axe counter
         },
         ["lance"] = {},
-        ["gunLance"] = {},
+        ["gunLance"] = {
+            [1320170169] = true, -- guard_edge
+        },
         ["bow"] = {},
     }
 
@@ -222,7 +225,7 @@ function actionMove.init()
         ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
         ["chargeAxe"] = actionMove.GetChargeAxeDodgeMove,
         ["lance"] = actionMove.GetGeneralDodgeMove,
-        ["gunLance"] = actionMove.GetGeneralDodgeMove,
+        ["gunLance"] = actionMove.GetGunlanceDodgeMove,
         ["bow"] = actionMove.GetBowDodgeMove,
     }
 
@@ -494,7 +497,7 @@ function actionMove.GetShortSwordDodgeMove (masterPlayer)
     if isGuard and not DodgeConfig.guardSlash then
         return nil
     end
-    if isGuard  then
+    if isGuard then
         return actionMove.dodgeMove["shortSword"]["guard_slash"]
     end
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
@@ -506,6 +509,26 @@ function actionMove.GetShortSwordDodgeMove (masterPlayer)
         return actionMove.dodgeMove["shortSword"]["windmill"]
     end
     return actionMove.dodgeMove["shortSword"]["normal"]
+end
+
+function actionMove.GetGunlanceDodgeMove (masterPlayer)
+    local wireNum = masterPlayer:getUsableHunterWireNum()
+    local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
+    if isGuard and not DodgeConfig.guardEdge then
+        return nil
+    end
+    if isGuard then
+        local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+        local guardEdgeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5) == 0 
+                and wireNum >= 1
+                and DodgeConfig.guardEdge
+        if guardEdgeEquipped then
+            return actionMove.dodgeMove["gunLance"]["guard_edge"]
+        end
+        return nil
+    end
+    return actionMove.dodgeMove["gunLance"]["normal"]
+
 end
 
 ------- Glitched, do not use-----------------
