@@ -59,7 +59,7 @@ The following features can be configured (turn on/off) with in the in-game REFra
 - Hammer
   - 
   - auto dodging
-  - (I tired but water strike doesn't work well, sorry hammer players)
+  - (I tried but water strike doesn't work well, sorry hammer players)
 - Hunting Horn
   - 
   - auto dodging
