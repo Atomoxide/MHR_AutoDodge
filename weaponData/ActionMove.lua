@@ -40,6 +40,10 @@ function actionMove.init()
             ["foresight"] = 1265650183,
             ["serene_pose"] = 276632468,
             ["spirit_blade"] = 3756441082,
+            ["up_sacred_iai"] = 3564270813,
+            ["down_sacred_iai"] = 1003674723,
+            ["left_scared_iai"] = 92514231,
+            ["right_sacred_iai"] = 2730865880,
         },
         ["dualBlades"] = {
             ["normal"] = 1731229352,
@@ -253,7 +257,13 @@ function actionMove.init()
         [3550856967] = true, -- longSword iai
         [2346527105] = true, -- longSword iai
         [1498247531] = true, -- longSword iai
-        [4092244120] = true, -- longSword the other iai
+        [4092244120] = true, -- longSword sacred iai
+        -- sacred iai dodge
+        [3564270813] = true,
+        [1003674723] = true,
+        [92514231] = true,
+        [2730865880] = true,
+        [2636031599] = true, -- sacred iai idle
     }
 
 end
@@ -348,13 +358,16 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
     end
     if Iai and DodgeConfig.iaiRelease then
         return actionMove.dodgeMove["longSword"]["iai_release"]
-    else
-        local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
-        if isAttack then
-            return actionMove.dodgeMove["longSword"]["foresight"]
-        end
-        return actionMove.dodgeMove["longSword"]["normal"]
     end
+    if SacredIai then
+        local dir = actionMove.GetLstickDir(masterPlayer)
+        return actionMove.dodgeMove["longSword"][dir.."_sacred_iai"]
+    end
+    local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
+    if isAttack then
+        return actionMove.dodgeMove["longSword"]["foresight"]
+    end
+    return actionMove.dodgeMove["longSword"]["normal"]
     
     
 end
@@ -564,7 +577,12 @@ end
 
 function actionMove.TrackLongSwordAction (masterPlayer, nodeID)
     Iai = (nodeID == 2346527105) or (nodeID == 1498247531)
-    -- log.debug(tostring(nodeID))
+    if (nodeID == 4092244120) then
+        SacredIai = true
+    elseif actionMove.weaponOffExceptions[nodeID] == nil then
+        SacredIai = false
+    end
+    -- log.debug(tostring(SacredIai))
 end
 
 function actionMove.TrackLightBowgunAction (masterPlayer, nodeID)
