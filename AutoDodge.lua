@@ -40,6 +40,9 @@ DodgeConfig = {
 	windmill = true, -- SS
 	guardSlash = true, -- SS
 	guardEdge = true, -- GL
+	instaGuard = true, -- LA
+	spiralThrust = true, -- LA
+	anchorRage = true, -- LA
 }
 
 ---- Load config file
@@ -64,6 +67,9 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.windmill = file.windmill
 			DodgeConfig.guardSlash = file.windmill
 			DodgeConfig.guardEdge = file.guardEdge
+			DodgeConfig.instaGuard = file.instaGuard
+			DodgeConfig.spiralThrust = file.spiralThrust
+			DodgeConfig.anchorRage = file.anchorRage
         end
     end
 end
@@ -88,6 +94,9 @@ local function SaveAutoDodgeConfig()
 		windmill = DodgeConfig.windmill,
 		guardSlash = DodgeConfig.windmill,
 		guardEdge = DodgeConfig.guardEdge,
+		instaGuard = DodgeConfig.instaGuard,
+		spiralThrust = DodgeConfig.spiralThrust,
+		anchorRage = DodgeConfig.anchorRage,
     })
 end
 
@@ -284,6 +293,17 @@ re.on_draw_ui(function()
 		imgui.spacing()
 		imgui.indent(25)
         changed, DodgeConfig.guardEdge = imgui.checkbox("Auto-casting Guard Edge (when player is guarding)", DodgeConfig.guardEdge)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Lance:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.instaGuard = imgui.checkbox("Auto Insta Guard (when player is NOT guarding)", DodgeConfig.instaGuard)
+		imgui.spacing()
+		changed, DodgeConfig.spiralThrust = imgui.checkbox("Auto-casting Spiral Thrust", DodgeConfig.spiralThrust)
+		imgui.spacing()
+		changed, DodgeConfig.anchorRage = imgui.checkbox("Auto-casting Anchor Rage", DodgeConfig.anchorRage)
         imgui.unindent(25)
 		imgui.spacing()
         if changed then SaveAutoDodgeConfig() end

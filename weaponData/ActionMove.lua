@@ -108,7 +108,10 @@ function actionMove.init()
         },
         ["lance"] = {
             ["normal"] = 1731229352,
-            ["guard"] = 1222480601,
+            ["guard"] = 1222480601, -- for during charging
+            ["insta_guard"] = 230736702,
+            ["spiral_thrust"] = 2709360959,
+            ["anchor_rage"] = 2613376038,
         },
         ["gunLance"] = {
             ["normal"] = 1731229352,
@@ -178,7 +181,10 @@ function actionMove.init()
             [2842504719] = true, -- normal counter
             [1460612556] = true, -- axe counter
         },
-        ["lance"] = {},
+        ["lance"] = {
+            [2709360959] = true, -- spiral_thrust
+            [2613376038] = true, -- anchor_rage
+        },
         ["gunLance"] = {
             [1320170169] = true, -- guard_edge
         },
@@ -550,10 +556,22 @@ end
 function actionMove.GetLanceDodgeMove (masterPlayer)
     local wireNum = masterPlayer:getUsableHunterWireNum()
     local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local instaGuard = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 1 and DodgeConfig.instaGuard
+    local spiralThrustEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 and DodgeConfig.spiralThrust
+    local anchorRageEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 0
+        and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) == 0
+        and DodgeConfig.anchorRage
+    if anchorRageEquipped then
+        return actionMove.dodgeMove["lance"]["anchor_rage"]
+    elseif spiralThrustEquipped then
+        return actionMove.dodgeMove["lance"]["spiral_thrust"]
+    end
     if isGuard then
         return nil
     end
     if masterPlayer:call("isLanceTag", LanceCharge) then return actionMove.dodgeMove["lance"]["guard"] end
+    if instaGuard then return actionMove.dodgeMove["lance"]["insta_guard"] end
     return actionMove.dodgeMove["lance"]["normal"]
 end
 
