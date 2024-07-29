@@ -9,7 +9,7 @@ All features were tested with Sunbreak DLC. Use with caution if you don't have t
 
 ## WHY DO I STILL GET HIT WITH AUTO DODGE?
 
-Due to animation lock, dodging moves will not be casted until another dodging move's animation is finished (this is by intention to avoid glitched character animation). The invulnerability window is shorter than the dodging animation, and thus there will be a gap between two invulnerability windows even the second dodging move is casted immediately after the first one. If your character is getting attacked during the gap, they will get hit no matter how perfect the dodging is. Leveling up your character's Evade Window skill will significantly reduce the chance of getting hit.
+Due to the animation lock, dodging moves will not be cast until another dodging move's animation is finished (this is done to avoid glitched character animation). The invulnerability window is shorter than the dodging animation. Thus there will be a gap between two invulnerability windows even if the second dodging move is cast immediately after the first one. If your character is getting attacked during the gap, they will get hit no matter how perfect the dodging is. Leveling up your character's Evade Window skill will significantly reduce the chance of getting hit. 
 
 ## Installation and Usage
 
