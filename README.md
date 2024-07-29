@@ -21,11 +21,11 @@ or
 
 https://github.com/praydog/REFramework
 
-2. Download script <a href="https://github.com/Atomoxide/MHR_AutoDodge/releases">here</a> and unzip release file and use REFramework to load AutoDodge.lua script.
+2. Download the latest script <a href="https://github.com/Atomoxide/MHR_AutoDodge/releases">here</a>, unzip, and copy "reframework" folder to your game directory (merge/overwrite if necessary).
 
 ## Features
 
-The following features are configurable (turn on/off) with in the in-game REFramework GUI. Under "script generated UI", click on "Toggle AutoDodge GUI" and check on the feature you wish to turn on (all features are enabled by default)
+The following features can be configured (turn on/off) with in the in-game REFramework GUI. Under "script generated UI", click on "Toggle AutoDodge GUI" and check on the feature you wish to turn on (all features are enabled by default)
 
 - Great Sword
   - 
@@ -39,20 +39,27 @@ The following features are configurable (turn on/off) with in the in-game REFram
   - auto Iai release in perfect timing
 - Sword & Shield
   - 
-  - auto dodging
+  - auto dodging (when player is not guarding)
+  - auto casting windmill to counter damage
+  - auto casting guard slash (when player is guarding)
 - Dual Blades
   - 
   - auto dodging
   - auto casting Shrouded Vault in perfect timing
 - Lance
   - 
-  - auto dodging (when not guarding)
+  - auto dodging (when player is not guarding)
+  - auto insta guard (when player is not guarding)
+  - auto casting anchor rage
+  - auto casting spiral thrust
 - Gunlance
   - 
-  - auto dodging (when not guarding)
+  - auto dodging (when player is not guarding)
+  - auto casting guard edge (when player is guarding)
 - Hammer
   - 
   - auto dodging
+  - (I tired but water strike doesn't work well, sorry hammer players)
 - Hunting Horn
   - 
   - auto dodging
@@ -61,7 +68,9 @@ The following features are configurable (turn on/off) with in the in-game REFram
   - auto dodging
 - Charge Blade
   - 
-  - auto dodging (when not guarding)
+  - auto dodging (when player is not guarding)
+  - auto morph to gain Guard Points (when player is guarding under sword mode) 
+  - auto casting counter peak performance
 - Insect Glaive
   - 
   - auto dodging
