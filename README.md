@@ -1,6 +1,6 @@
 # MHR_AutoDodge
 
-a Monster Hunter Rise mod to perform auto dodge (and more evading moves) during quests.
+a Monster Hunter Rise mod to perform auto dodge (as well as auto counter, auto guard, and more) during quests.
 
 
 ## Warning
