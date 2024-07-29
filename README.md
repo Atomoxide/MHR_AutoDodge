@@ -37,6 +37,8 @@ The following features can be configured (turn on/off) with in the in-game REFra
   - auto dodging
   - auto casting Foresight Slash in perfect timing
   - auto Iai release in perfect timing
+  - auto casting serene pose
+  - auto casting spirit slash
 - Sword & Shield
   - 
   - auto dodging (when player is not guarding)
