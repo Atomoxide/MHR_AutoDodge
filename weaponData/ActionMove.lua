@@ -6,6 +6,7 @@ function actionMove.init()
     DualBladeNormal = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Normal"):get_data(nil)
 	DualBladeKijin = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin"):get_data(nil)
     DualBladeKijinJyuu = sdk.find_type_definition("snow.player.DualBlades.DualBladesState"):get_field("Kijin_Jyuu"):get_data(nil)
+    LanceCharge = sdk.find_type_definition("snow.player.LanceTag"):get_field("Charge"):get_data(nil)
     actionMove.weaponType = {
         [0] = "greatSword",
         [1] = "slashAxe", -- aka switch axe
@@ -64,6 +65,7 @@ function actionMove.init()
         ["hammer"] = {
             ["normal"] = 1731229352,
             ["water_strike"] = 265605206,
+            ["water_strike_cont"] = 1162063468,
         },
         ["shortSword"] = {
             ["normal"] = 1731229352,
@@ -101,7 +103,8 @@ function actionMove.init()
             ["counter_morph_slash"] = 3760447530,
         },
         ["lance"] = {
-            ["normal"] = 1731229352
+            ["normal"] = 1731229352,
+            ["guard"] = 1222480601,
         },
         ["gunLance"] = {
             ["normal"] = 1731229352,
@@ -224,7 +227,7 @@ function actionMove.init()
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
         ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
         ["chargeAxe"] = actionMove.GetChargeAxeDodgeMove,
-        ["lance"] = actionMove.GetGeneralDodgeMove,
+        ["lance"] = actionMove.GetLanceDodgeMove,
         ["gunLance"] = actionMove.GetGunlanceDodgeMove,
         ["bow"] = actionMove.GetBowDodgeMove,
     }
@@ -531,12 +534,22 @@ function actionMove.GetGunlanceDodgeMove (masterPlayer)
 
 end
 
+function actionMove.GetLanceDodgeMove (masterPlayer)
+    local wireNum = masterPlayer:getUsableHunterWireNum()
+    local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
+    if isGuard then
+        return nil
+    end
+    if masterPlayer:call("isLanceTag", LanceCharge) then return actionMove.dodgeMove["lance"]["guard"] end
+    return actionMove.dodgeMove["lance"]["normal"]
+end
+
 ------- Glitched, do not use-----------------
 -- function actionMove.GetHammerDodgeMove (masterPlayer)
 --     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
 --     local waterStrikeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
 --     if waterStrikeEquipped then
---         return actionMove.dodgeMove["hammer"]["water_strike"]
+--         return WaterStrike
 --     end
 --     return actionMove.dodgeMove["hammer"]["normal"]
 -- end
@@ -590,6 +603,18 @@ function actionMove.TrackBowAction (masterPlayer, nodeID)
         BowAiming = false
     end
 end
+
+-- function actionMove.TrackHammerAction (masterPlayer, nodeID)
+--     if WaterStrike == nil then
+--         WaterStrike = actionMove.dodgeMove["hammer"]["water_strike"]
+--     end
+--     if nodeID == actionMove.dodgeMove["hammer"]["water_strike"] then
+--         WaterStrike = actionMove.dodgeMove["hammer"]["water_strike_cont"]
+--     else
+--         WaterStrike = actionMove.dodgeMove["hammer"]["water_strike"]
+--     end
+    
+-- end
 
 ---- Player L Stick Direction
 function actionMove.GetLstickDir (masterPlayer)
