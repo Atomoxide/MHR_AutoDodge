@@ -558,10 +558,13 @@ function actionMove.GetLanceDodgeMove (masterPlayer)
     local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local instaGuard = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 1 and DodgeConfig.instaGuard
-    local spiralThrustEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 and DodgeConfig.spiralThrust
+    local spiralThrustEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
+        and DodgeConfig.spiralThrust
+        and wireNum >= 1
     local anchorRageEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 0
         and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) == 0
         and DodgeConfig.anchorRage
+        and wireNum >= 1
     if anchorRageEquipped then
         return actionMove.dodgeMove["lance"]["anchor_rage"]
     elseif spiralThrustEquipped then
