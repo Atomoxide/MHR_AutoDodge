@@ -5,11 +5,11 @@ a Monster Hunter Rise mod to perform auto dodge (as well as auto counter, auto g
 
 ## Warning
 
-All features were tested with Sunbreak DLC. Use with causion if you don't have the DLC.
+All features were tested with Sunbreak DLC. Use with caution if you don't have the DLC.
 
 ## WHY DO I STILL GET HIT WITH AUTO DODGE?
 
-Due to animation lock, dodging moves will not be casted until another dodging move's animation is finished (this is by intention to avoid glitched character animation). The invulnerbility window is shorter than the dodging animation, and thus there will be a gap between two invulnerbility winodws even the second dodging move is casted immediately after the first one. If your character is getting attacked during the gap, they will get hit no matter how perfect the dodging is. Leveling up your character's Evade Window skill will significantly reduce the chance of getting hit.
+Due to animation lock, dodging moves will not be casted until another dodging move's animation is finished (this is by intention to avoid glitched character animation). The invulnerability window is shorter than the dodging animation, and thus there will be a gap between two invulnerability windows even the second dodging move is casted immediately after the first one. If your character is getting attacked during the gap, they will get hit no matter how perfect the dodging is. Leveling up your character's Evade Window skill will significantly reduce the chance of getting hit.
 
 ## Installation and Usage
 
