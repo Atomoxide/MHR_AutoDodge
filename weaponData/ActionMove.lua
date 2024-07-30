@@ -370,7 +370,7 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
         return actionMove.dodgeMove["longSword"][dir.."_sacred_iai"]
     end
     local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
-    if isAttack then
+    if isAttack and DodgeConfig.foresight then
         return actionMove.dodgeMove["longSword"]["foresight"]
     end
     return actionMove.dodgeMove["longSword"]["normal"]
