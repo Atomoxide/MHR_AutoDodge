@@ -57,7 +57,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.tackle = file.tackle
 			DodgeConfig.wyvernCounter = file.wyvernCounter
 			DodgeConfig.counterShot = file.counterShot
-			DodgeConfig.counterShot = file.counterCharge
+			DodgeConfig.counterCharge = file.counterCharge
 			DodgeConfig.foresight = file.foresight
 			DodgeConfig.iaiRelease = file.iaiRelease
 			DodgeConfig.serenePose = file.serenePose
