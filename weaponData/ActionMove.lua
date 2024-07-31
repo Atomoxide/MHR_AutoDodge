@@ -30,7 +30,8 @@ function actionMove.init()
             ["normal"] = 1731229352,
             ["adamant_charged"] = 1148884139,
             ["plain_adamant_charged"] = 3883211982,
-            ["tackle"] = 877278880,
+            ["tackle_1"] = 877278885,
+            ["tackle_2"] = 877278880,
             ["defensive_tackle_1"] = 345871120,
             ["defensive_tackle_2"] = 2805658423
         },
@@ -132,7 +133,8 @@ function actionMove.init()
 
     actionMove.dodgeLockMove = {
         ["greatSword"] = {
-            [877278880] = true, -- tackle
+            [877278885] = true, -- tackle @ charge1
+            [877278880] = true, -- tackle @ charege2/3
             [345871120] = true, -- defensive tackle @ charge1
             [2805658423] = true, -- defensive tackle @ charge2/3
             [2051136789] = true, -- hunting edge
@@ -299,7 +301,11 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer)
     if not DodgeConfig.tackle then
         return nil
     elseif replaceSkillData0 == 0 then
-        return actionMove.dodgeMove["greatSword"]["tackle"]
+        if InitialCharging then
+            return actionMove.dodgeMove["greatSword"]["tackle_1"]
+        else
+            return actionMove.dodgeMove["greatSword"]["tackle_2"]
+        end
     else
         if InitialCharging then
             return actionMove.dodgeMove["greatSword"]["defensive_tackle_1"]
@@ -370,7 +376,8 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
         return actionMove.dodgeMove["longSword"][dir.."_sacred_iai"]
     end
     local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
-    if isAttack and DodgeConfig.foresight then
+    local spiritGaugeNum = masterPlayer:get_field("_LongSwordGauge")
+    if isAttack and DodgeConfig.foresight and spiritGaugeNum > 0 then
         return actionMove.dodgeMove["longSword"]["foresight"]
     end
     return actionMove.dodgeMove["longSword"]["normal"]
