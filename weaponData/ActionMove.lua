@@ -279,7 +279,11 @@ end
 ---- Dodge move decision functions
 
 function actionMove.GetGeneralDodgeMove (masterPlayer)
-    return actionMove.dodgeMove[actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]]["normal"]
+    if DodgeConfig.rollDodge then
+        return actionMove.dodgeMove[actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]]["normal"]
+    else
+        return nil
+    end
 end
 
 function actionMove.GetGreatSwordDodgeMove (masterPlayer)
@@ -287,7 +291,9 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer)
         return nil
     end
     if not (InitialCharging or ContinueCharging) then
-        return actionMove.dodgeMove["greatSword"]["normal"]
+        if DodgeConfig.rollDodge then
+            return actionMove.dodgeMove["greatSword"]["normal"]
+        else return nil end
     end
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) -- adamant_charged
@@ -340,7 +346,7 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
         else
             return actionMove.dodgeMove["dualBlades"]["normal_vault"]
         end
-    else
+    elseif DodgeConfig.rollDodge then
         if kijinState then
             return actionMove.dodgeMove["dualBlades"]["kijin_kyouka"]
         elseif state == DualBladeKijin then
@@ -380,7 +386,11 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
     if isAttack and DodgeConfig.foresight and spiritGaugeNum > 0 then
         return actionMove.dodgeMove["longSword"]["foresight"]
     end
-    return actionMove.dodgeMove["longSword"]["normal"]
+    if DodgeConfig.rollDodge then
+        return actionMove.dodgeMove["longSword"]["normal"]
+    else
+        return nil
+    end
     
     
 end
@@ -392,7 +402,9 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer)
     if replaceSkillData4 == 1 and wireNum >= 1 and DodgeConfig.wyvernCounter then
         return actionMove.dodgeMove["lightBowgun"]["wyvern_counter"]
     end
-
+    if not DodgeConfig.rollDodge then
+        return nil
+    end
 	-- local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
     local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
     local isAiming = masterPlayer:call("isLightBowgunTag", aiming)
@@ -430,6 +442,9 @@ function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
     if replaceSkillData1 == 1 and replaceSkillData4 == 0 and wireNum >= 1 and DodgeConfig.counterCharge then
         return actionMove.dodgeMove["heavyBowgun"]["counter_charge"]
     end
+    if not DodgeConfig.rollDodge then
+        return nil
+    end
     if not HeavyBowgunAiming then
         -- log.debug("direct dodge")
         return actionMove.dodgeMove["heavyBowgun"]["normal"]
@@ -446,6 +461,9 @@ function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
 end
 
 function actionMove.GetBowDodgeMove (masterPlayer)
+    if not DodgeConfig.rollDodge then
+        return nil
+    end
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
     local dir = actionMove.GetLstickDir(masterPlayer)
@@ -471,6 +489,9 @@ function actionMove.GetBowDodgeMove (masterPlayer)
 end
 
 function actionMove.GetSlashAxeDodgeMove (masterPlayer)
+    if not DodgeConfig.rollDodge then
+        return nil
+    end
     local sword
     local state
     sword = sdk.find_type_definition("snow.player.SlashAxe.WeaponMode"):get_field("Sword"):get_data(nil)
@@ -511,12 +532,16 @@ function actionMove.GetChargeAxeDodgeMove (masterPlayer)
         if counterEquipped then
             return actionMove.dodgeMove["chargeAxe"]["axe_counter"]
         end
-        return actionMove.dodgeMove["chargeAxe"]["axe"]
+        if DodgeConfig.rollDodge then
+            return actionMove.dodgeMove["chargeAxe"]["axe"]
+        else return nil end
     else
         if counterEquipped then
             return actionMove.dodgeMove["chargeAxe"]["normal_counter"]
         end
-        return actionMove.dodgeMove["chargeAxe"]["normal"]
+        if DodgeConfig.rollDodge then
+            return actionMove.dodgeMove["chargeAxe"]["normal"]
+        else return nil end
     end
 end
 
@@ -537,7 +562,9 @@ function actionMove.GetShortSwordDodgeMove (masterPlayer)
     if windMillEquipped then
         return actionMove.dodgeMove["shortSword"]["windmill"]
     end
-    return actionMove.dodgeMove["shortSword"]["normal"]
+    if DodgeConfig.rollDodge then
+        return actionMove.dodgeMove["shortSword"]["normal"]
+    else return nil end
 end
 
 function actionMove.GetGunlanceDodgeMove (masterPlayer)
@@ -556,7 +583,9 @@ function actionMove.GetGunlanceDodgeMove (masterPlayer)
         end
         return nil
     end
-    return actionMove.dodgeMove["gunLance"]["normal"]
+    if DodgeConfig.rollDodge then
+        return actionMove.dodgeMove["gunLance"]["normal"]
+    else return nil end
 
 end
 
@@ -582,7 +611,9 @@ function actionMove.GetLanceDodgeMove (masterPlayer)
     end
     if masterPlayer:call("isLanceTag", LanceCharge) then return actionMove.dodgeMove["lance"]["guard"] end
     if instaGuard then return actionMove.dodgeMove["lance"]["insta_guard"] end
-    return actionMove.dodgeMove["lance"]["normal"]
+    if DodgeConfig.rollDodge then
+        return actionMove.dodgeMove["lance"]["normal"]
+    else return nil end
 end
 
 ------- Glitched, do not use-----------------

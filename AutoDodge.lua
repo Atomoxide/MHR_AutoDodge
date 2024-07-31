@@ -25,6 +25,7 @@ actionMove.init()
 
 DodgeConfig = {
 	enabled = true, -- general
+	rollDodge = true, 
 	shroudedVault = true, -- DB
 	adamantChargedSlash = true, -- GS
 	tackle = true, -- GS
@@ -51,6 +52,7 @@ local function LoadAutoDodgeConfig()
         local file = json.load_file(configPath)
         if file then
             DodgeConfig.enabled = file.enabled
+			DodgeConfig.rollDodge = file.rollDodge
             popWindow = file.popWindow
 			DodgeConfig.shroudedVault = file.shroudedVault
 			DodgeConfig.adamantChargedSlash = file.adamantChargedSlash
@@ -79,6 +81,7 @@ LoadAutoDodgeConfig()
 local function SaveAutoDodgeConfig()
     json.dump_file(configPath, {
         enabled = DodgeConfig.enabled,
+		rollDodge = DodgeConfig.rollDodge,
         shroudedVault = DodgeConfig.shroudedVault,
 		adamantChargedSlash = DodgeConfig.adamantChargedSlash,
 		tackle = DodgeConfig.tackle,
@@ -222,7 +225,9 @@ re.on_draw_ui(function()
 		imgui.text("General:")
 		imgui.spacing()
 		imgui.indent(25)
-        changed, DodgeConfig.enabled = imgui.checkbox("Enable Auto Dodge", DodgeConfig.enabled)
+        changed, DodgeConfig.enabled = imgui.checkbox("Enable AutoDodge Mod", DodgeConfig.enabled)
+		imgui.spacing()
+		changed, DodgeConfig.rollDodge = imgui.checkbox("Auto roll-dodging", DodgeConfig.rollDodge)
         imgui.unindent(25)
 		imgui.spacing()
 
