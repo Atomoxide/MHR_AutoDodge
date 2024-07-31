@@ -26,6 +26,7 @@ actionMove.init()
 DodgeConfig = {
 	enabled = true, -- general
 	rollDodge = true, 
+	weaponOffDodge = true,
 	shroudedVault = true, -- DB
 	adamantChargedSlash = true, -- GS
 	tackle = true, -- GS
@@ -44,6 +45,7 @@ DodgeConfig = {
 	instaGuard = true, -- LA
 	spiralThrust = true, -- LA
 	anchorRage = true, -- LA
+	dodgeBolt = true, -- BW
 }
 
 ---- Load config file
@@ -53,6 +55,7 @@ local function LoadAutoDodgeConfig()
         if file then
             DodgeConfig.enabled = file.enabled
 			DodgeConfig.rollDodge = file.rollDodge
+			DodgeConfig.weaponOffDodge = file.weaponOffDodge
             popWindow = file.popWindow
 			DodgeConfig.shroudedVault = file.shroudedVault
 			DodgeConfig.adamantChargedSlash = file.adamantChargedSlash
@@ -72,6 +75,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.instaGuard = file.instaGuard
 			DodgeConfig.spiralThrust = file.spiralThrust
 			DodgeConfig.anchorRage = file.anchorRage
+			DodgeConfig.dodgeBolt = file.dodgeBolt
         end
     end
 end
@@ -100,6 +104,7 @@ local function SaveAutoDodgeConfig()
 		instaGuard = DodgeConfig.instaGuard,
 		spiralThrust = DodgeConfig.spiralThrust,
 		anchorRage = DodgeConfig.anchorRage,
+		dodgeBolt = DodgeConfig.dodgeBolt,
     })
 end
 
@@ -144,8 +149,13 @@ function(args)
 	dodgeReady = true
 
 	if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
-		dodgeAction = actionMove.dodgeMove["weaponOff"]
+		if DodgeConfig.weaponOffDodge then
+			dodgeAction = actionMove.dodgeMove["weaponOff"]
+		else
+			dodgeAction = nil
+		end
 		return
+		
 	end
     
 	if trackActionFunc ~= nil then
@@ -227,7 +237,9 @@ re.on_draw_ui(function()
 		imgui.indent(25)
         changed, DodgeConfig.enabled = imgui.checkbox("Enable AutoDodge Mod", DodgeConfig.enabled)
 		imgui.spacing()
-		changed, DodgeConfig.rollDodge = imgui.checkbox("Auto roll-dodging", DodgeConfig.rollDodge)
+		changed, DodgeConfig.rollDodge = imgui.checkbox("Auto weapon on roll-dodging", DodgeConfig.rollDodge)
+		imgui.spacing()
+		changed, DodgeConfig.weaponOffDodge = imgui.checkbox("Auto weapon off roll-dodging", DodgeConfig.weaponOffDodge)
         imgui.unindent(25)
 		imgui.spacing()
 
@@ -309,6 +321,13 @@ re.on_draw_ui(function()
 		changed, DodgeConfig.spiralThrust = imgui.checkbox("Auto-casting Spiral Thrust", DodgeConfig.spiralThrust)
 		imgui.spacing()
 		changed, DodgeConfig.anchorRage = imgui.checkbox("Auto-casting Anchor Rage", DodgeConfig.anchorRage)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Bow:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.dodgeBolt = imgui.checkbox("Auto dodging with Charging Sidestep/Dodgebolt", DodgeConfig.dodgeBolt)
         imgui.unindent(25)
 		imgui.spacing()
         if changed then SaveAutoDodgeConfig() end

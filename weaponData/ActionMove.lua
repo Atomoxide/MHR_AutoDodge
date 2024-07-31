@@ -461,31 +461,33 @@ function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
 end
 
 function actionMove.GetBowDodgeMove (masterPlayer)
-    if not DodgeConfig.rollDodge then
-        return nil
-    end
-    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
-    local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
-    local dir = actionMove.GetLstickDir(masterPlayer)
-    if BowAiming then
-        -- log.debug("aiming mode")
-        if replaceSkillData1 == 0 then
-            return actionMove.dodgeMove["bow"][dir.."_slide"]
-        else
-            return actionMove.dodgeMove["bow"][dir.."_dodgebolt"]
+    if DodgeConfig.dodgeBolt then
+        local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+        local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
+        local dir = actionMove.GetLstickDir(masterPlayer)
+        if BowAiming then
+            -- log.debug("aiming mode")
+            if replaceSkillData1 == 0 then
+                return actionMove.dodgeMove["bow"][dir.."_slide"]
+            else
+                return actionMove.dodgeMove["bow"][dir.."_dodgebolt"]
+            end
         end
-    end
-    local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
-    if isAttack then
-        -- log.debug("attacking")
-        if replaceSkillData1 == 0 then
-            return actionMove.dodgeMove["bow"][dir.."_slide"]
-        else
-            return actionMove.dodgeMove["bow"][dir.."_dodgebolt"]
+        local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
+        if isAttack then
+            -- log.debug("attacking")
+            if replaceSkillData1 == 0 then
+                return actionMove.dodgeMove["bow"][dir.."_slide"]
+            else
+                return actionMove.dodgeMove["bow"][dir.."_dodgebolt"]
+            end
         end
     end
     -- log.debug("normal")
-    return actionMove.dodgeMove["bow"]["normal"]
+    if DodgeConfig.rollDodge then
+        return actionMove.dodgeMove["bow"]["normal"]
+    end
+    return nil
 end
 
 function actionMove.GetSlashAxeDodgeMove (masterPlayer)
