@@ -86,6 +86,7 @@ local function SaveAutoDodgeConfig()
     json.dump_file(configPath, {
         enabled = DodgeConfig.enabled,
 		rollDodge = DodgeConfig.rollDodge,
+		weaponType = DodgeConfig.weaponOffDodge,
         shroudedVault = DodgeConfig.shroudedVault,
 		adamantChargedSlash = DodgeConfig.adamantChargedSlash,
 		tackle = DodgeConfig.tackle,
