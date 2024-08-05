@@ -211,8 +211,8 @@ function actionMove.init()
         ["horn"] = {},
         ["heavyBowgun"] = {
             [3508851309] = true, -- counter shot/charge ready
-            [1922002985] = true, -- counter shot activated
-            [335808431] = true, -- counter charge activated
+            -- [1922002985] = true, -- counter shot activated
+            -- [335808431] = true, -- counter charge activated
         },
         ["lightBowgun"] = {},
         ["hammer"] = {
