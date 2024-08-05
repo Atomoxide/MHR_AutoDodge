@@ -713,6 +713,7 @@ function actionMove.GetLstickDir (masterPlayer)
 	elseif	leftJoyDir >= -2.357 and leftJoyDir <= -0.785 then
 		dir = "right"
 	end
+    if dir == nil then dir = "up" end -- ensure direction assigned
 	return dir
 end
 
