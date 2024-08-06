@@ -216,7 +216,7 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 				local playerPos = masterPlayer:call("get_GameObject"):call("get_Transform"):call("get_Position")
 				distance = CalDistance(targetPos, playerPos)
 			end
-			log.debug(tostring(distance))
+			-- log.debug(tostring(distance))
 			dodgeAction = dodgeActionFunc(masterPlayer, distance)
 		end
 		
