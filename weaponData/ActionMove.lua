@@ -282,7 +282,7 @@ end
 
 ---- Dodge move decision functions
 
-function actionMove.GetGeneralDodgeMove (masterPlayer)
+function actionMove.GetGeneralDodgeMove (masterPlayer, distance)
     if DodgeConfig.rollDodge then
         return actionMove.dodgeMove[actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]]["normal"]
     else
@@ -290,7 +290,7 @@ function actionMove.GetGeneralDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetGreatSwordDodgeMove (masterPlayer)
+function actionMove.GetGreatSwordDodgeMove (masterPlayer, distance)
     if masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag) then
         return nil
     end
@@ -325,7 +325,7 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetDualBladesDodgeMove (masterPlayer)
+function actionMove.GetDualBladesDodgeMove (masterPlayer, distance)
     local state
     local shroudedVaultDodge = false
     if DodgeConfig.shroudedVault then
@@ -338,7 +338,7 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
 	
     state = masterPlayer:call("get_DBState")
 	local kijinState = masterPlayer:call("isKijinKyouka")
-    if shroudedVaultDodge then
+    if shroudedVaultDodge and distance < tonumber(DodgeConfig.shroudedVaultDistance) then
         if kijinState then
             return actionMove.dodgeMove["dualBlades"]["kijin_kyouka_vault"]
         elseif state == DualBladeKijin then
@@ -365,16 +365,16 @@ function actionMove.GetDualBladesDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetLongSwordDodgeMove (masterPlayer)
+function actionMove.GetLongSwordDodgeMove (masterPlayer, distance)
     if (DodgeConfig.serenePose or DodgeConfig.spiritBlade) and not Iai and not SacredIai then
         local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
         local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
         local replaceSkillData5 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 5)
         local wireNum = masterPlayer:getUsableHunterWireNum()
         local spiritGauge = masterPlayer:get_LongSwordGaugeLv()
-        if DodgeConfig.serenePose and replaceSkillData5 == 0 and wireNum >= 2 and spiritGauge == LongSwordMaxSpirit then
+        if DodgeConfig.serenePose and replaceSkillData5 == 0 and wireNum >= 2 and spiritGauge == LongSwordMaxSpirit and distance < tonumber(DodgeConfig.serenePoseDistance) then
             return actionMove.dodgeMove["longSword"]["serene_pose"]
-        elseif DodgeConfig.spiritBlade and replaceSkillData4 == 1 and wireNum >= 1 then
+        elseif DodgeConfig.spiritBlade and replaceSkillData4 == 1 and wireNum >= 1 and distance < tonumber(DodgeConfig.spiritBladeDistance) then
             return actionMove.dodgeMove["longSword"]["spirit_blade"]
         end
     end
@@ -399,12 +399,12 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer)
     
 end
 
-function actionMove.GetLightBowgunDodgeMove (masterPlayer)
+function actionMove.GetLightBowgunDodgeMove (masterPlayer, distance)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
     local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
     local wireNum = masterPlayer:getUsableHunterWireNum()
-    if replaceSkillData4 == 1 and wireNum >= 1 and DodgeConfig.wyvernCounter then
+    if replaceSkillData4 == 1 and wireNum >= 1 and DodgeConfig.wyvernCounter and distance < tonumber(DodgeConfig.wyvernCounterDistance) then
         return actionMove.dodgeMove["lightBowgun"]["wyvern_counter"]
     end
     if not DodgeConfig.rollDodge then
@@ -439,7 +439,7 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer)
     return actionMove.dodgeMove["lightBowgun"][key]
 end
 
-function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
+function actionMove.GetHeavyBowgunDodgeMove (masterPlayer, distance)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
     local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
@@ -469,7 +469,7 @@ function actionMove.GetHeavyBowgunDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetBowDodgeMove (masterPlayer)
+function actionMove.GetBowDodgeMove (masterPlayer, distance)
     if DodgeConfig.dodgeBolt then
         local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
         local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
@@ -499,7 +499,7 @@ function actionMove.GetBowDodgeMove (masterPlayer)
     return nil
 end
 
-function actionMove.GetSlashAxeDodgeMove (masterPlayer)
+function actionMove.GetSlashAxeDodgeMove (masterPlayer, distance)
     if not DodgeConfig.rollDodge then
         return nil
     end
@@ -514,7 +514,7 @@ function actionMove.GetSlashAxeDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetChargeAxeDodgeMove (masterPlayer)
+function actionMove.GetChargeAxeDodgeMove (masterPlayer, distance)
     if masterPlayer:get_field("_GuardPoint") then
         return nil
     end
@@ -556,7 +556,7 @@ function actionMove.GetChargeAxeDodgeMove (masterPlayer)
     end
 end
 
-function actionMove.GetShortSwordDodgeMove (masterPlayer)
+function actionMove.GetShortSwordDodgeMove (masterPlayer, distance)
     local wireNum = masterPlayer:getUsableHunterWireNum()
     local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
     if isGuard and not DodgeConfig.guardSlash then
@@ -570,9 +570,11 @@ function actionMove.GetShortSwordDodgeMove (masterPlayer)
             and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 0 
             and wireNum >= 2
             and DodgeConfig.windmill
+            and distance < tonumber(DodgeConfig.windmillDistance)
     local shoryugekiEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 1
             and  wireNum >= 2
             and DodgeConfig.shoryugeki
+            and distance < tonumber(DodgeConfig.shoryugekiDistance)
     if windMillEquipped then
         return actionMove.dodgeMove["shortSword"]["windmill"]
     end
@@ -584,7 +586,7 @@ function actionMove.GetShortSwordDodgeMove (masterPlayer)
     else return nil end
 end
 
-function actionMove.GetGunlanceDodgeMove (masterPlayer)
+function actionMove.GetGunlanceDodgeMove (masterPlayer, distance)
     local wireNum = masterPlayer:getUsableHunterWireNum()
     local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
     if isGuard and not DodgeConfig.guardEdge then
@@ -606,7 +608,7 @@ function actionMove.GetGunlanceDodgeMove (masterPlayer)
 
 end
 
-function actionMove.GetLanceDodgeMove (masterPlayer)
+function actionMove.GetLanceDodgeMove (masterPlayer, distance)
     local wireNum = masterPlayer:getUsableHunterWireNum()
     local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", GuardStateTag)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
@@ -614,6 +616,7 @@ function actionMove.GetLanceDodgeMove (masterPlayer)
     local spiralThrustEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
         and DodgeConfig.spiralThrust
         and wireNum >= 1
+        and distance < tonumber(DodgeConfig.spiralThrustDistance)
     local anchorRageEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 0
         and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) == 0
         and DodgeConfig.anchorRage
@@ -633,7 +636,7 @@ function actionMove.GetLanceDodgeMove (masterPlayer)
     else return nil end
 end
 
-function actionMove.GetHammerDodgeMove (masterPlayer)
+function actionMove.GetHammerDodgeMove (masterPlayer, distance)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local waterStrikeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
     if waterStrikeEquipped then
