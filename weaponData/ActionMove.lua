@@ -168,7 +168,7 @@ function actionMove.init()
             -- [2317440567] = true, -- reload: slow
         },
         ["hammer"] = {
-            -- [265605206] = true, -- water_strike
+            [265605206] = true, -- water_strike
         },
         ["shortSword"] = {
             [3012216100] = true, -- windmill
@@ -237,7 +237,7 @@ function actionMove.init()
         ["horn"] = actionMove.GetGeneralDodgeMove,
         ["heavyBowgun"] = actionMove.GetHeavyBowgunDodgeMove,
         ["lightBowgun"] = actionMove.GetLightBowgunDodgeMove,
-        ["hammer"] = actionMove.GetGeneralDodgeMove, -- WIP
+        ["hammer"] = actionMove.GetGeneralDodgeMove, -- wip
         ["shortSword"] = actionMove.GetShortSwordDodgeMove,
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
         ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
@@ -257,10 +257,12 @@ function actionMove.init()
 
     actionMove.getCounterCallbackFuncs = {
         ["shortSword"] = actionMove.ShortSowrdCounterCallback,
+        -- ["hammer"] = actionMove.HammerCounterCallback, -- wip
     }
 
     actionMove.CounterCallbackMove = {
-        ["shortSword"] = 2051323613
+        ["shortSword"] = actionMove.dodgeMove["shortSword"]["shoryugeki"],
+        ["hammer"] = actionMove.dodgeMove["hammer"]["water_strike"]
     }
 
     actionMove.weaponOffExceptions = {
