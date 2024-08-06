@@ -271,7 +271,7 @@ function actionMove.init()
         ["heavyBowgun"] = nil,
         ["lightBowgun"] = nil,
         ["hammer"] = nil,
-        ["shortSword"] = nil,
+        ["shortSword"] = actionMove.ShortSowrdCounterCallback,
         ["insectGlaive"] = nil,
         ["slashAxe"] = nil,
         ["chargeAxe"] = nil,
@@ -724,6 +724,13 @@ end
 --     end
     
 -- end
+
+---- Counter Callbacks 
+
+function actionMove.ShortSowrdCounterCallback (masterPlayerBehaviorTree)
+    log.debug("counter call back")
+    masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",141465730,nil,nil)
+end
 
 ---- Player L Stick Direction
 function actionMove.GetLstickDir (masterPlayer)

@@ -192,6 +192,10 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 		if masterPlayerDamage and isFromEnemy and isHit then
 			if dodgeReady and (dodgeAction ~= nil) then
 				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
+				if counterCallbackFunc ~= nil then
+					counterCallbackFunc(masterPlayerBehaviorTree)
+					return sdk.to_ptr(2)
+				end
 				return sdk.to_ptr(1)
 			else
 				return retval
@@ -217,6 +221,7 @@ function(args)
 	weaponType = actionMove.weaponType[masterPlayer:get_field("_playerWeaponType")]
 	dodgeActionFunc = actionMove.getDodgeMoveFuncs[weaponType]
 	trackActionFunc = actionMove.getTrackActionFuncs[weaponType]
+	counterCallbackFunc = actionMove.getCounterCallbackFuncs[weaponType]
 end,
 function(retval) return retval end
 )
