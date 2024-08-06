@@ -21,7 +21,7 @@ or
 
 https://github.com/praydog/REFramework
 
-2. Download the latest script <a href="https://github.com/Atomoxide/MHR_AutoDodge/releases">here</a>, unzip, and copy "reframework" folder to your game directory (merge/overwrite if necessary).
+2. Download the latest script <a href="https://www.nexusmods.com/monsterhunterrise/mods/3200">here</a>, unzip, and copy "reframework" folder to your game directory (merge/overwrite if necessary).
 
 ## Features
 
@@ -43,6 +43,7 @@ The following features can be configured (turn on/off) with in the in-game REFra
   - 
   - auto dodging (when player is not guarding)
   - auto casting windmill to counter damage
+  - auto casting shoryugeki
   - auto casting guard slash (when player is guarding)
 - Dual Blades
   - 
