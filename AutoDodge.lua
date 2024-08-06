@@ -17,6 +17,9 @@ local weaponType
 local dodgeActionFunc
 local trackActionFunc
 local counterCallbackFunc, counterCallbackMove
+local weaponOn
+local callbackFlag = false
+local callbackReady = false
 AttackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
 
 local actionMove = require("weaponData.ActionMove")
@@ -133,7 +136,7 @@ function(args)
 	-- log.debug(tostring(dodgeDisabled))
 
 	---- check is weapon drawn
-	local weaponOn = masterPlayer:call("isWeaponOn")
+	weaponOn = masterPlayer:call("isWeaponOn")
 
 	-- check dodgeLock
 	if actionMove.dodgeLockMove[weaponType][nodeID] then
@@ -153,21 +156,11 @@ function(args)
 
 	dodgeReady = true
 
-	if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
-		if DodgeConfig.weaponOffDodge then
-			dodgeAction = actionMove.dodgeMove["weaponOff"]
-		else
-			dodgeAction = nil
-		end
-		return
-		
-	end
-    
 	if trackActionFunc ~= nil then
 		trackActionFunc(masterPlayer, nodeID)
 	end
 	
-	dodgeAction = dodgeActionFunc(masterPlayer)
+	-- dodgeAction = dodgeActionFunc(masterPlayer)
     -- log.debug(dodgeAction)
 
 end,
@@ -183,7 +176,15 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 		masterPlayerDamage = masterPlayerIndex == manager:get_field("_PlayerIndex")
 
 		isFromEnemy = damageData:call("get_OwnerType") == 1
-		-- curPlayerIndex = manager:get_field("_PlayerIndex")
+		if (not weaponOn) and (not actionMove.weaponOffExceptions[nodeID]) then
+			if DodgeConfig.weaponOffDodge then
+				dodgeAction = actionMove.dodgeMove["weaponOff"]
+			else
+				dodgeAction = nil
+			end
+		else
+			dodgeAction = dodgeActionFunc(masterPlayer)
+		end
 		
         -- log.debug("Damage detected")
 	end,
@@ -193,7 +194,7 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 			if dodgeReady and (dodgeAction ~= nil) then
 				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
 				if counterCallbackFunc ~= nil and dodgeAction == counterCallbackMove then
-					counterCallbackFunc(masterPlayerBehaviorTree)
+					callbackFlag = true
 					return sdk.to_ptr(2)
 				end
 				return sdk.to_ptr(1)
@@ -225,6 +226,23 @@ function(args)
 	counterCallbackMove = actionMove.CounterCallbackMove[weaponType]
 end,
 function(retval) return retval end
+)
+
+---- call backs
+
+re.on_frame (
+	function ()
+		if callbackReady then
+			callbackReady = false
+			counterCallbackFunc(masterPlayerBehaviorTree)
+		end
+
+		if callbackFlag then
+			callbackFlag = false
+			callbackReady = true
+		end
+
+	end
 )
 
 -- REFramework UI
