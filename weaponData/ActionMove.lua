@@ -77,6 +77,7 @@ function actionMove.init()
             ["windmill"] = 3012216100,
             ["guard_slash"] = 1622021678,
             ["shoryugeki"] = 2051323613,
+            ["shoryugeki_success"] = 141465730,
         },
         ["insectGlaive"] = {
             ["normal"] = 1731229352
@@ -167,7 +168,7 @@ function actionMove.init()
             -- [2317440567] = true, -- reload: slow
         },
         ["hammer"] = {
-            [265605206] = true, -- water_strike
+            -- [265605206] = true, -- water_strike
         },
         ["shortSword"] = {
             [3012216100] = true, -- windmill
@@ -218,7 +219,7 @@ function actionMove.init()
         },
         ["lightBowgun"] = {},
         ["hammer"] = {
-            [1162063468] = true, -- water_strike continuation
+            -- [1162063468] = true, -- water_strike continuation
         },
         ["shortSword"] = {},
         ["insectGlaive"] = {},
@@ -236,7 +237,7 @@ function actionMove.init()
         ["horn"] = actionMove.GetGeneralDodgeMove,
         ["heavyBowgun"] = actionMove.GetHeavyBowgunDodgeMove,
         ["lightBowgun"] = actionMove.GetLightBowgunDodgeMove,
-        ["hammer"] = actionMove.GetGeneralDodgeMove,
+        ["hammer"] = actionMove.GetGeneralDodgeMove, -- WIP
         ["shortSword"] = actionMove.GetShortSwordDodgeMove,
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
         ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
@@ -249,35 +250,17 @@ function actionMove.init()
     actionMove.getTrackActionFuncs = {
         ["greatSword"] = actionMove.TrackGreatSwordAction,
         ["longSword"] = actionMove.TrackLongSwordAction,
-        ["dualBlades"] = nil,
-        ["horn"] = nil,
         ["heavyBowgun"] = actionMove.TrackHeavyBowgunAction,
         ["lightBowgun"] = actionMove.TrackLightBowgunAction,
-        ["hammer"] = nil,
-        ["shortSword"] = nil,
-        ["insectGlaive"] = nil,
-        ["slashAxe"] = nil,
-        ["chargeAxe"] = nil,
-        ["lance"] = nil,
-        ["gunLance"] = nil,
         ["bow"] = actionMove.TrackBowAction,
     }
 
     actionMove.getCounterCallbackFuncs = {
-        ["greatSword"] = nil,
-        ["longSword"] = nil,
-        ["dualBlades"] = nil,
-        ["horn"] = nil,
-        ["heavyBowgun"] = nil,
-        ["lightBowgun"] = nil,
-        ["hammer"] = nil,
         ["shortSword"] = actionMove.ShortSowrdCounterCallback,
-        ["insectGlaive"] = nil,
-        ["slashAxe"] = nil,
-        ["chargeAxe"] = nil,
-        ["lance"] = nil,
-        ["gunLance"] = nil,
-        ["bow"] = nil,
+    }
+
+    actionMove.CounterCallbackMove = {
+        ["shortSword"] = 2051323613
     }
 
     actionMove.weaponOffExceptions = {
@@ -648,15 +631,14 @@ function actionMove.GetLanceDodgeMove (masterPlayer)
     else return nil end
 end
 
-------- Glitched, do not use-----------------
--- function actionMove.GetHammerDodgeMove (masterPlayer)
---     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
---     local waterStrikeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
---     if waterStrikeEquipped then
---         return WaterStrike
---     end
---     return actionMove.dodgeMove["hammer"]["normal"]
--- end
+function actionMove.GetHammerDodgeMove (masterPlayer)
+    local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
+    local waterStrikeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
+    if waterStrikeEquipped then
+        return actionMove.dodgeMove["hammer"]["water_strike"]
+    end
+    return actionMove.dodgeMove["hammer"]["normal"]
+end
 
 
 ---- Player action tracking functions
@@ -728,8 +710,13 @@ end
 ---- Counter Callbacks 
 
 function actionMove.ShortSowrdCounterCallback (masterPlayerBehaviorTree)
-    log.debug("counter call back")
-    masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",141465730,nil,nil)
+    -- log.debug("counter call back")
+    masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["shortSword"]["shoryugeki_success"],nil,nil)
+end
+
+function actionMove.HammerCounterCallback (masterPlayerBehaviorTree)
+    -- log.debug("counter call back")
+    masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["hammer"]["water_strike_cont"],nil,nil)
 end
 
 ---- Player L Stick Direction

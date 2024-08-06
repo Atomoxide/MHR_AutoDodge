@@ -16,7 +16,7 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
-local counterCallbackFunc
+local counterCallbackFunc, counterCallbackMove
 AttackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
 
 local actionMove = require("weaponData.ActionMove")
@@ -192,7 +192,7 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 		if masterPlayerDamage and isFromEnemy and isHit then
 			if dodgeReady and (dodgeAction ~= nil) then
 				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
-				if counterCallbackFunc ~= nil then
+				if counterCallbackFunc ~= nil and dodgeAction == counterCallbackMove then
 					counterCallbackFunc(masterPlayerBehaviorTree)
 					return sdk.to_ptr(2)
 				end
@@ -222,6 +222,7 @@ function(args)
 	dodgeActionFunc = actionMove.getDodgeMoveFuncs[weaponType]
 	trackActionFunc = actionMove.getTrackActionFuncs[weaponType]
 	counterCallbackFunc = actionMove.getCounterCallbackFuncs[weaponType]
+	counterCallbackMove = actionMove.CounterCallbackMove[weaponType]
 end,
 function(retval) return retval end
 )
