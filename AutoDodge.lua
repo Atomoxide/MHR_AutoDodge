@@ -16,6 +16,7 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
+local counterCallbackFunc
 AttackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
 
 local actionMove = require("weaponData.ActionMove")
@@ -40,6 +41,7 @@ DodgeConfig = {
 	counterPeakPerforamce = true, -- CB
 	autoGuardPoints = true, -- CB
 	windmill = true, -- SS
+	shoryugeki = true, -- SS
 	guardSlash = true, -- SS
 	guardEdge = true, -- GL
 	instaGuard = true, -- LA
@@ -70,6 +72,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
 			DodgeConfig.windmill = file.windmill
+			DodgeConfig.shoryugeki = file.shoryugeki
 			DodgeConfig.guardSlash = file.windmill
 			DodgeConfig.guardEdge = file.guardEdge
 			DodgeConfig.instaGuard = file.instaGuard
@@ -100,6 +103,7 @@ local function SaveAutoDodgeConfig()
 		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
 		windmill = DodgeConfig.windmill,
+		shoryugeki = DodgeConfig.shoryugeki,
 		guardSlash = DodgeConfig.windmill,
 		guardEdge = DodgeConfig.guardEdge,
 		instaGuard = DodgeConfig.instaGuard,
@@ -302,6 +306,8 @@ re.on_draw_ui(function()
 		imgui.spacing()
 		imgui.indent(25)
         changed, DodgeConfig.windmill = imgui.checkbox("Auto-casting Windmill to counter damage", DodgeConfig.windmill)
+		imgui.spacing()
+		changed, DodgeConfig.shoryugeki = imgui.checkbox("Auto-casting Shoryugeki (uppercut) to counter damage", DodgeConfig.shoryugeki)
 		imgui.spacing()
 		changed, DodgeConfig.guardSlash = imgui.checkbox("Auto-casting Guard Slash (when player is guarding)", DodgeConfig.guardSlash)
         imgui.unindent(25)

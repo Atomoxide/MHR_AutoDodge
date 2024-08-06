@@ -76,12 +76,14 @@ function actionMove.init()
             ["normal"] = 1731229352,
             ["windmill"] = 3012216100,
             ["guard_slash"] = 1622021678,
+            ["shoryugeki"] = 2051323613,
         },
         ["insectGlaive"] = {
             ["normal"] = 1731229352
         },
         ["lightBowgun"] = {
             ["normal"] = 377966749,
+            ["step_dodge"] = 1561843394,
             ["up_step_1"] = 1731229352,
             ["up_step_2"] = 3638676728,
             ["left_step_1"] = 1731229350,
@@ -261,6 +263,23 @@ function actionMove.init()
         ["bow"] = actionMove.TrackBowAction,
     }
 
+    actionMove.getCounterCallbackFuncs = {
+        ["greatSword"] = nil,
+        ["longSword"] = nil,
+        ["dualBlades"] = nil,
+        ["horn"] = nil,
+        ["heavyBowgun"] = nil,
+        ["lightBowgun"] = nil,
+        ["hammer"] = nil,
+        ["shortSword"] = nil,
+        ["insectGlaive"] = nil,
+        ["slashAxe"] = nil,
+        ["chargeAxe"] = nil,
+        ["lance"] = nil,
+        ["gunLance"] = nil,
+        ["bow"] = nil,
+    }
+
     actionMove.weaponOffExceptions = {
         [3550856967] = true, -- longSword iai
         [2346527105] = true, -- longSword iai
@@ -398,6 +417,7 @@ end
 function actionMove.GetLightBowgunDodgeMove (masterPlayer)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
+    local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
     local wireNum = masterPlayer:getUsableHunterWireNum()
     if replaceSkillData4 == 1 and wireNum >= 1 and DodgeConfig.wyvernCounter then
         return actionMove.dodgeMove["lightBowgun"]["wyvern_counter"]
@@ -410,7 +430,11 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer)
     local isAiming = masterPlayer:call("isLightBowgunTag", aiming)
     -- local shotState = masterPlayer:call("isLightBowgunTag", shot)
     if not ShotState or not isAiming then
-        return actionMove.dodgeMove["lightBowgun"]["normal"]
+        if replaceSkillData1 == 1 then
+            return actionMove.dodgeMove["lightBowgun"]["step_dodge"]
+        else
+            return actionMove.dodgeMove["lightBowgun"]["normal"]
+        end
     end
     local dir = actionMove.GetLstickDir(masterPlayer)
     local key
@@ -561,8 +585,14 @@ function actionMove.GetShortSwordDodgeMove (masterPlayer)
             and replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 0 
             and wireNum >= 2
             and DodgeConfig.windmill
+    local shoryugekiEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 2) == 1
+            and  wireNum >= 2
+            and DodgeConfig.shoryugeki
     if windMillEquipped then
         return actionMove.dodgeMove["shortSword"]["windmill"]
+    end
+    if shoryugekiEquipped then
+        return actionMove.dodgeMove["shortSword"]["shoryugeki"]
     end
     if DodgeConfig.rollDodge then
         return actionMove.dodgeMove["shortSword"]["normal"]
