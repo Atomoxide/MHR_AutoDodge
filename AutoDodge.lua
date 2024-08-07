@@ -49,6 +49,7 @@ local function DefaultConfig()
 		spiritBladeDistance = 4,
 		counterPeakPerforamce = true, -- CB
 		autoGuardPoints = true, -- CB
+		elementalCounter = true, -- SA
 		windmill = true, -- SS
 		windmillDistance = 4,
 		shoryugeki = true, -- SS
@@ -90,6 +91,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.spiritBladeDistance = file.spiritBladeDistance
 			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
+			DodgeConfig.elementalCounter = file.elementalCounter
 			DodgeConfig.windmill = file.windmill
 			DodgeConfig.windmillDistance = file.windmillDistance
 			DodgeConfig.shoryugeki = file.shoryugeki
@@ -128,6 +130,7 @@ local function SaveAutoDodgeConfig()
 		spiritBladeDistance = DodgeConfig.spiritBladeDistance,
 		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
+		elementalCounter = DodgeConfig.elementalCounter,
 		windmill = DodgeConfig.windmill,
 		windmillDistance = DodgeConfig.windmillDistance,
 		shoryugeki = DodgeConfig.shoryugeki,
@@ -420,6 +423,13 @@ re.on_draw_ui(function()
         changed, DodgeConfig.counterPeakPerforamce = imgui.checkbox("Auto-casting Counter Peak Performance", DodgeConfig.counterPeakPerforamce)
 		imgui.spacing()
 		changed, DodgeConfig.autoGuardPoints = imgui.checkbox("Auto morph to gain Guard Points (when player is guarding under sword mode)", DodgeConfig.autoGuardPoints)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Switch Axe:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.elementalCounter = imgui.checkbox("Auto Elemental Burst (with an Elemental Counter readied)", DodgeConfig.elementalCounter)
         imgui.unindent(25)
 		imgui.spacing()
 

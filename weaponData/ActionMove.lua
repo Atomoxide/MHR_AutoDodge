@@ -100,7 +100,8 @@ function actionMove.init()
         },
         ["slashAxe"] = {
             ["normal"] = 1731229352,
-            ["sword"] = 1888074074
+            ["sword"] = 1888074074,
+            ["element_counter"] = 1322606337,
         },
         ["chargeAxe"] = {
             ["normal"] = 1731229352,
@@ -179,6 +180,9 @@ function actionMove.init()
         ["slashAxe"] = {
             [2777648365] = true, -- Compressed Finishing Discharge
             [2872321796] = true, -- Invincible Gambit
+            -- [1769663665] = true, -- axe element counter start
+            -- [1864735059] = true, -- sword element counter start
+            [1322606337] = true, -- element counter slash
         },
         ["chargeAxe"] = {
             [2180283493] = true, -- silk normal guard
@@ -223,7 +227,10 @@ function actionMove.init()
         },
         ["shortSword"] = {},
         ["insectGlaive"] = {},
-        ["slashAxe"] = {},
+        ["slashAxe"] = {
+            -- [3184069722] = true, -- element counter continues
+            -- [1322606337] = true, -- element counter slash
+        },
         ["chargeAxe"] = {},
         ["lance"] = {},
         ["gunLance"] = {},
@@ -253,6 +260,7 @@ function actionMove.init()
         ["heavyBowgun"] = actionMove.TrackHeavyBowgunAction,
         ["lightBowgun"] = actionMove.TrackLightBowgunAction,
         ["bow"] = actionMove.TrackBowAction,
+        ["slashAxe"] = actionMove.TrackSlashAxeAction,
     }
 
     actionMove.getCounterCallbackFuncs = {
@@ -500,6 +508,9 @@ function actionMove.GetBowDodgeMove (masterPlayer, distance)
 end
 
 function actionMove.GetSlashAxeDodgeMove (masterPlayer, distance)
+    if CounterReady and DodgeConfig.elementalCounter then
+        return actionMove.dodgeMove["slashAxe"]["element_counter"]
+    end
     if not DodgeConfig.rollDodge then
         return nil
     end
@@ -698,6 +709,10 @@ function actionMove.TrackBowAction (masterPlayer, nodeID)
     elseif nodeID == 3738870336 or nodeID ==  1564395738 then
         BowAiming = false
     end
+end
+
+function actionMove.TrackSlashAxeAction (masterPlayer, nodeID)
+    CounterReady = nodeID == 176966366 or nodeID == 1864735059 or nodeID == 3184069722
 end
 
 -- function actionMove.TrackHammerAction (masterPlayer, nodeID)
