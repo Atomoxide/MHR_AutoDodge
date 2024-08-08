@@ -35,7 +35,7 @@ local function DefaultConfig()
 		weaponOffDodge = true,
 		shroudedVault = true, -- DB
 		shroudedVaultDistance = 4,
-		adamantChargedSlash = true, -- GS
+		strongArmStance = true, -- GS
 		tackle = true, -- GS
 		wyvernCounter = true, -- LBG
 		wyvernCounterDistance = 4,
@@ -77,7 +77,7 @@ local function LoadAutoDodgeConfig()
             popWindow = file.popWindow
 			DodgeConfig.shroudedVault = file.shroudedVault
 			DodgeConfig.shroudedVaultDistance = file.shroudedVaultDistance
-			DodgeConfig.adamantChargedSlash = file.adamantChargedSlash
+			DodgeConfig.strongArmStance = file.adamantChargedSlash
 			DodgeConfig.tackle = file.tackle
 			DodgeConfig.wyvernCounter = file.wyvernCounter
 			DodgeConfig.wyvernCounterDistance = file.wyvernCounterDistance
@@ -116,7 +116,7 @@ local function SaveAutoDodgeConfig()
 		weaponOffDodge = DodgeConfig.weaponOffDodge,
         shroudedVault = DodgeConfig.shroudedVault,
 		shroudedVaultDistance = DodgeConfig.shroudedVaultDistance,
-		adamantChargedSlash = DodgeConfig.adamantChargedSlash,
+		adamantChargedSlash = DodgeConfig.strongArmStance,
 		tackle = DodgeConfig.tackle,
 		wyvernCounter = DodgeConfig.wyvernCounter,
 		wyvernCounterDistance = DodgeConfig.wyvernCounterDistance,
@@ -347,7 +347,7 @@ re.on_draw_ui(function()
 		imgui.text("Great Sword:")
 		imgui.spacing()
 		imgui.indent(25)
-		changed, DodgeConfig.adamantChargedSlash = imgui.checkbox("Auto-casting Adamant Charged Slash", DodgeConfig.adamantChargedSlash)
+		changed, DodgeConfig.strongArmStance = imgui.checkbox("Auto-casting Strong Arm Stance", DodgeConfig.strongArmStance)
 		imgui.spacing()
 		changed, DodgeConfig.tackle = imgui.checkbox("Auto Tackle during Charging", DodgeConfig.tackle)
         imgui.unindent(25)

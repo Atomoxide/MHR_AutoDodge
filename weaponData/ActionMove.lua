@@ -28,8 +28,8 @@ function actionMove.init()
         ["weaponOff"] = 1505041940,
         ["greatSword"] = {
             ["normal"] = 1731229352,
-            ["adamant_charged"] = 1148884139,
-            ["plain_adamant_charged"] = 3883211982,
+            ["strong_arm"] = 1148884139,
+            ["plain_strong_arm"] = 3883211982,
             ["tackle_1"] = 877278885,
             ["tackle_2"] = 877278880,
             ["defensive_tackle_1"] = 345871120,
@@ -310,10 +310,10 @@ function actionMove.GetGreatSwordDodgeMove (masterPlayer, distance)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) -- adamant_charged
     local replaceSkillData0 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) -- tackle/ defensive tackle
-    if (InitialCharging or ContinueCharging) and replaceSkillData4 == 1 and DodgeConfig.adamantChargedSlash then
+    if (InitialCharging or ContinueCharging) and replaceSkillData4 == 1 and DodgeConfig.strongArmStance then
         local wireNum = masterPlayer:getUsableHunterWireNum()
         if wireNum >= 2 then
-            return actionMove.dodgeMove["greatSword"]["adamant_charged"]
+            return actionMove.dodgeMove["greatSword"]["strong_arm"]
         end
     end
     if not DodgeConfig.tackle then
