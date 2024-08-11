@@ -665,7 +665,10 @@ function actionMove.TrackGreatSwordAction (masterPlayer, nodeID)
 end
 
 function actionMove.TrackLongSwordAction (masterPlayer, nodeID)
-    Iai = (nodeID == 2346527105) or (nodeID == 2072503206) or (nodeID == 1498247531)
+    Iai = (nodeID == 2346527105) 
+    or (nodeID == 1714446132) or (nodeID == 2072503206) -- skill III
+    or (nodeID == 3550856967) or (nodeID == 2346527105) -- skill II/I/None
+    or (nodeID == 1498247531)
     if (nodeID == 4092244120) then
         SacredIai = true
     elseif actionMove.weaponOffExceptions[nodeID] == nil then
