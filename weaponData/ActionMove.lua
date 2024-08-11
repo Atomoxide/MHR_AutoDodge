@@ -416,8 +416,8 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer, distance)
         return actionMove.dodgeMove["longSword"]["iai_release"]
     end
     if SacredIai then
-        -- log.debug(tostring(DodgeConfig.sacredSheath)..": "..tostring(DodgeConfig.sacredSheathDistance).."/"..tostring(distance))
-        if DodgeConfig.sacredSheath and distance < tonumber(DodgeConfig.sacredSheathDistance) then
+        -- log.debug(tostring(DodgeConfig.sacredSheathe)..": "..tostring(DodgeConfig.sacredSheatheDistance).."/"..tostring(distance))
+        if DodgeConfig.sacredSheathe and distance < tonumber(DodgeConfig.sacredSheatheDistance) then
             return actionMove.dodgeMove["longSword"]["sacred_iai_release"]
         end
         local dir = actionMove.GetLstickDir(masterPlayer)
@@ -832,7 +832,7 @@ function actionMove.LongSwordCounterPostMove (input_masterPlayer, input_masterPl
     
 end
 
----- Long Sword Sacred Sheath Speical Case
+---- Long Sword Sacred Sheathe Speical Case
 
 re.on_frame (
 	function ()

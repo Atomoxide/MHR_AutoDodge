@@ -22,6 +22,7 @@ local callbackFlag = false
 local callbackPending = false
 local lockOnTargetId
 local targetList = {}
+local actionId, actionBankId
 AttackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
 
 local actionMove = require("weaponData.ActionMove")
@@ -47,8 +48,9 @@ local function DefaultConfig()
 		serenePoseDistance = 4,
 		spiritBlade = true, -- LS
 		spiritBladeDistance = 4,
-		sacredSheath = true,
-		sacredSheathDistance = 4,
+		sacredSheathe = true,
+		sacredSheatheDistance = 4,
+		sacredCounter = true,
 		counterPeakPerforamce = true, -- CB
 		autoGuardPoints = true, -- CB
 		elementalCounter = true, -- SA
@@ -91,8 +93,9 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.serenePoseDistance = file.serenePoseDistance
 			DodgeConfig.spiritBlade = file.spiritBlade
 			DodgeConfig.spiritBladeDistance = file.spiritBladeDistance
-			DodgeConfig.sacredSheath = file.sacredSheath
-			DodgeConfig.sacredSheathDistance = file.sacredSheathDistance
+			DodgeConfig.sacredSheathe = file.sacredSheathe
+			DodgeConfig.sacredSheatheDistance = file.sacredSheatheDistance
+			DodgeConfig.sacredCounter = file.sacredCounter
 			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
 			DodgeConfig.elementalCounter = file.elementalCounter
@@ -132,8 +135,9 @@ local function SaveAutoDodgeConfig()
 		serenePoseDistance = DodgeConfig.serenePoseDistance,
 		spiritBlade = DodgeConfig.spiritBlade,
 		spiritBladeDistance = DodgeConfig.spiritBladeDistance,
-		sacredSheath = DodgeConfig.sacredSheath,
-		sacredSheathDistance = DodgeConfig.sacredSheathDistance,
+		sacredSheathe = DodgeConfig.sacredSheathe,
+		sacredSheatheDistance = DodgeConfig.sacredSheatheDistance,
+		sacredCounter = DodgeConfig.sacredCounter,
 		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
 		elementalCounter = DodgeConfig.elementalCounter,
@@ -161,12 +165,20 @@ function(args)
 		return 
 	end
 
-	---- Sacred Sheath Speical Case
+	---- Sacred Sheathe Speical Case
 	if weaponType == "longSword" then
 		if nodeID == 1753709204 and actionMove.get_dodged() then
 			masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["longSword"]["sacred_iai_release"],nil,nil)
 			actionMove.LongSwordCounterPostMove(masterPlayer, masterPlayerBehaviorTree, actionMove.dodgeMove["longSword"]["sacred_iai_release"])
 		end
+		local motionControl = sdk.to_managed_object(args[2])
+
+		local refPlayerBase = motionControl:get_field("_RefPlayerBase")
+		local playerIndex = refPlayerBase:get_field("_PlayerIndex")
+		if playerIndex ~= masterPlayerIndex then return end
+
+		actionBankId = motionControl:get_field("_OldBankID")
+		actionId = motionControl:get_field("_OldMotionID")
 	end
     -- log.debug(tostring(dodgeReady))
     ---- check player status
@@ -259,7 +271,11 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 					end
 					return sdk.to_ptr(1)
 				end
-			elseif isAutoCountered then
+			elseif isAutoCountered and weaponType == "longSword" and DodgeConfig.sacredCounter then
+				if actionBankId == 100 and actionId == 161 then
+					masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["longSword"]["sacred_counter"],nil,nil)
+					return sdk.to_ptr(1)
+				end
 				return retval
 			end
 			return retval
@@ -384,16 +400,18 @@ re.on_draw_ui(function()
 		imgui.indent(25)
         changed, DodgeConfig.foresight = imgui.checkbox("Auto-casting Foresight Slash", DodgeConfig.foresight)
 		imgui.spacing()
-		changed, DodgeConfig.iaiRelease = imgui.checkbox("Auto releasing Special Sheath", DodgeConfig.iaiRelease)
+		changed, DodgeConfig.iaiRelease = imgui.checkbox("Auto releasing Special Sheathe", DodgeConfig.iaiRelease)
 		imgui.spacing()
-		changed, DodgeConfig.sacredSheath = imgui.checkbox("Auto releasing Sacred Sheath", DodgeConfig.sacredSheath)
+		changed, DodgeConfig.sacredSheathe = imgui.checkbox("Auto releasing Sacred Sheathe Finishing", DodgeConfig.sacredSheathe)
 		imgui.indent(25)
-		imgui.begin_disabled(not DodgeConfig.sacredSheath)
+		imgui.begin_disabled(not DodgeConfig.sacredSheathe)
 		imgui.text("if the player is within " )
 		imgui.same_line()
-		changed, DodgeConfig.sacredSheathDistance = imgui.slider_float(" feet to the lock-on target (Sacred Sheath)", DodgeConfig.sacredSheathDistance, 0, 20)
+		changed, DodgeConfig.sacredSheatheDistance = imgui.slider_float(" feet to the lock-on target (Sacred Sheathe)", DodgeConfig.sacredSheatheDistance, 0, 20)
 		imgui.end_disabled()
 		imgui.unindent(25)
+		imgui.spacing()
+		changed, DodgeConfig.sacredCounter = imgui.checkbox("Auto-casting Sacred Sheathe Counter", DodgeConfig.sacredCounter)
 		imgui.spacing()
 		changed, DodgeConfig.serenePose = imgui.checkbox("Auto-casting Serene Pose (only at Max Spirit Gauge)", DodgeConfig.serenePose)
 		imgui.indent(25)
