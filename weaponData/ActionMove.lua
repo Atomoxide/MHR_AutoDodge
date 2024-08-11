@@ -274,6 +274,10 @@ function actionMove.init()
         ["hammer"] = actionMove.dodgeMove["hammer"]["water_strike"]
     }
 
+    actionMove.CounterPreMoveFuncs = {
+        ["lightBowgun"] = actionMove.LightBowgunGounterPreMove,
+    }
+
     actionMove.weaponOffExceptions = {
         [3550856967] = true, -- longSword iai
         [2346527105] = true, -- longSword iai
@@ -423,7 +427,7 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer, distance)
     -- local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
     -- local isAiming = masterPlayer:call("isLightBowgunTag", aiming)
     -- local shotState = masterPlayer:call("isLightBowgunTag", shot)
-    log.debug(tostring(ShotState).." and "..tostring(LightBowgunAiming))
+    -- log.debug(tostring(ShotState).." and "..tostring(LightBowgunAiming))
     -- if not ShotState or not isAiming then
     if not ShotState or not LightBowgunAiming then
         if replaceSkillData1 == 1 then
@@ -749,6 +753,24 @@ function actionMove.HammerCounterCallback (masterPlayerBehaviorTree)
     -- log.debug("counter call back")
     masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["hammer"]["water_strike_cont"],nil,nil)
 end
+
+---- Counter Pre Moves
+
+function actionMove.LightBowgunGounterPreMove (masterPlayer, dodgeAction)
+    if (dodgeAction == actionMove.dodgeMove["lightBowgun"]["normal"] 
+        or  dodgeAction == actionMove.dodgeMove["lightBowgun"]["step_dodge"])
+        and LightBowgunAiming then
+        local playerDir = masterPlayer:get_RefAngleCtrl()
+        local userInput = masterPlayer:get_RefPlayerInput() --snow.player.PlayerInput
+        playerDir:set_field("_targetAngle", userInput:getHormdirLstick())
+    end
+end
+
+-- function actionMove.TestPreMove (masterPlayer, dodgeAction)
+--     local playerDir = masterPlayer:get_RefAngleCtrl()
+--     local userInput = masterPlayer:get_RefPlayerInput() --snow.player.PlayerInput
+--     userInput:set_field("_targetAngle", userInput:getHormdirLstick())
+-- end
 
 ---- Player L Stick Direction
 function actionMove.GetLstickDir (masterPlayer)

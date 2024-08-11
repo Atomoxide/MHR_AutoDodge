@@ -16,7 +16,7 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
-local counterCallbackFunc, counterCallbackMove
+local counterCallbackFunc, counterCallbackMove, counterPreMoveFunc
 local weaponOn
 local callbackFlag = false
 local callbackReady = false
@@ -229,6 +229,9 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 		local isHit = sdk.to_int64(retval) == 0
 		if masterPlayerDamage and isFromEnemy and isHit then
 			if dodgeReady and (dodgeAction ~= nil) then
+				if counterPreMoveFunc ~= nil then
+					counterPreMoveFunc(masterPlayer, dodgeAction)
+				end
 				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
 				if counterCallbackFunc ~= nil and dodgeAction == counterCallbackMove then
 					callbackFlag = true
@@ -261,6 +264,7 @@ function(args)
 	trackActionFunc = actionMove.getTrackActionFuncs[weaponType]
 	counterCallbackFunc = actionMove.getCounterCallbackFuncs[weaponType]
 	counterCallbackMove = actionMove.CounterCallbackMove[weaponType]
+	counterPreMoveFunc = actionMove.CounterPreMoveFuncs[weaponType]
 	if not GuiManager then
 		GuiManager = sdk.get_managed_singleton("snow.gui.GuiManager")
 	end
