@@ -778,6 +778,10 @@ end
 function actionMove.GetLstickDir (masterPlayer)
     local userInput = masterPlayer:get_RefPlayerInput() --snow.player.PlayerInput
 	local leftJoyDir = userInput:getLstickDir()
+    local leftJoyDeadZone = userInput:getStickPowerLevel()
+    if leftJoyDeadZone and leftJoyDeadZone == 0 then
+        return "up"
+    end
 	local dir = nil
 	-- Up
 	if (leftJoyDir >= -0.785 and leftJoyDir <= 0.785) or (leftJoyDir == 3.5762786865234e-07) then
