@@ -83,7 +83,6 @@ function actionMove.init()
             ["normal"] = 1731229352
         },
         ["lightBowgun"] = {
-            -- ["normal"] = 1731229352,
             ["normal"] = 377966749,
             ["step_dodge"] = 1561843394,
             ["up_step_1"] = 1731229352,
@@ -758,11 +757,12 @@ end
 
 function actionMove.LightBowgunGounterPreMove (masterPlayer, dodgeAction)
     if (dodgeAction == actionMove.dodgeMove["lightBowgun"]["normal"] 
-        or  dodgeAction == actionMove.dodgeMove["lightBowgun"]["step_dodge"])
-        and LightBowgunAiming then
+        or  dodgeAction == actionMove.dodgeMove["lightBowgun"]["step_dodge"]) then
+        -- and LightBowgunAiming then
         local playerDir = masterPlayer:get_RefAngleCtrl()
         local userInput = masterPlayer:get_RefPlayerInput() --snow.player.PlayerInput
         playerDir:set_field("_targetAngle", userInput:getHormdirLstick())
+        playerDir:set_field("_targetAngleSpeed","3.0")
     end
 end
 
