@@ -83,6 +83,7 @@ function actionMove.init()
             ["normal"] = 1731229352
         },
         ["lightBowgun"] = {
+            -- ["normal"] = 1731229352,
             ["normal"] = 377966749,
             ["step_dodge"] = 1561843394,
             ["up_step_1"] = 1731229352,
@@ -419,10 +420,12 @@ function actionMove.GetLightBowgunDodgeMove (masterPlayer, distance)
         return nil
     end
 	-- local shot = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("Shot"):get_data(nil)
-    local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
-    local isAiming = masterPlayer:call("isLightBowgunTag", aiming)
+    -- local aiming = sdk.find_type_definition("snow.player.LightBowgunTag"):get_field("AimCamera"):get_data(nil)
+    -- local isAiming = masterPlayer:call("isLightBowgunTag", aiming)
     -- local shotState = masterPlayer:call("isLightBowgunTag", shot)
-    if not ShotState or not isAiming then
+    log.debug(tostring(ShotState).." and "..tostring(LightBowgunAiming))
+    -- if not ShotState or not isAiming then
+    if not ShotState or not LightBowgunAiming then
         if replaceSkillData1 == 1 then
             return actionMove.dodgeMove["lightBowgun"]["step_dodge"]
         else
@@ -684,16 +687,21 @@ function actionMove.TrackLightBowgunAction (masterPlayer, nodeID)
     if nodeID == 2926577812 or nodeID == 280999592 then
         ShotState = false
     end
+    if nodeID == 4082878341 or nodeID == 2926577812 or nodeID == 280999592 then
+        LightBowgunAiming = true
+    elseif nodeID == 868667607 or nodeID == 1447239366 or nodeID == 161777641 then
+        LightBowgunAiming = false
+    end
     -- log.debug(tostring(ShotState))
 end
 
 function actionMove.TrackHeavyBowgunAction (masterPlayer, nodeID)
     -- log.debug(tostring(HeavyBowgunAiming))
     -- log.debug(tostring(nodeID))
-    if nodeID == 3346707463 or nodeID == 2719596258 then
+    if nodeID == 2931394887 or nodeID == 3346707463 or nodeID == 2719596258 then
         -- log.debug("set true")
         HeavyBowgunAiming = true
-    elseif nodeID == 4097256303 then
+    elseif nodeID == 4097256303 or nodeID == 510517979 or nodeID == 3001397684 then
         -- log.debug("set false")
         HeavyBowgunAiming = false
     end
