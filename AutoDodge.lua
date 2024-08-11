@@ -16,10 +16,10 @@ local dodgeLock = false
 local weaponType
 local dodgeActionFunc
 local trackActionFunc
-local counterCallbackFunc, counterCallbackMove, counterPreMoveFunc
+local counterCallbackFunc, counterCallbackMove, counterPreMoveFunc, counterPostMoveFunc
 local weaponOn
 local callbackFlag = false
-local callbackReady = false
+local callbackPending = false
 local lockOnTargetId
 local targetList = {}
 AttackStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Attack"):get_data(nil)
@@ -47,6 +47,8 @@ local function DefaultConfig()
 		serenePoseDistance = 4,
 		spiritBlade = true, -- LS
 		spiritBladeDistance = 4,
+		sacredSheath = true,
+		sacredSheathDistance = 4,
 		counterPeakPerforamce = true, -- CB
 		autoGuardPoints = true, -- CB
 		elementalCounter = true, -- SA
@@ -89,6 +91,8 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.serenePoseDistance = file.serenePoseDistance
 			DodgeConfig.spiritBlade = file.spiritBlade
 			DodgeConfig.spiritBladeDistance = file.spiritBladeDistance
+			DodgeConfig.sacredSheath = file.sacredSheath
+			DodgeConfig.sacredSheathDistance = file.sacredSheathDistance
 			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
 			DodgeConfig.elementalCounter = file.elementalCounter
@@ -128,6 +132,8 @@ local function SaveAutoDodgeConfig()
 		serenePoseDistance = DodgeConfig.serenePoseDistance,
 		spiritBlade = DodgeConfig.spiritBlade,
 		spiritBladeDistance = DodgeConfig.spiritBladeDistance,
+		sacredSheath = DodgeConfig.sacredSheath,
+		sacredSheathDistance = DodgeConfig.sacredSheathDistance,
 		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
 		elementalCounter = DodgeConfig.elementalCounter,
@@ -149,9 +155,18 @@ end
 sdk.hook(sdk.find_type_definition("snow.player.PlayerMotionControl"):get_method("lateUpdate"),
 function(args)
 	if not masterPlayer then return end
+	
 	if not DodgeConfig.enabled then 
 		dodgeReady = false
 		return 
+	end
+
+	---- Sacred Sheath Speical Case
+	if weaponType == "longSword" then
+		if nodeID == 1753709204 and actionMove.get_dodged() then
+			masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["longSword"]["sacred_iai_release"],nil,nil)
+			actionMove.LongSwordCounterPostMove(masterPlayer, masterPlayerBehaviorTree, actionMove.dodgeMove["longSword"]["sacred_iai_release"])
+		end
 	end
     -- log.debug(tostring(dodgeReady))
     ---- check player status
@@ -227,22 +242,28 @@ sdk.hook(sdk.find_type_definition("snow.player.PlayerQuestBase"):get_method("che
 	end,
     function(retval)
 		local isHit = sdk.to_int64(retval) == 0
-		if masterPlayerDamage and isFromEnemy and isHit then
-			if dodgeReady and (dodgeAction ~= nil) then
-				if counterPreMoveFunc ~= nil then
-					counterPreMoveFunc(masterPlayer, dodgeAction)
+		local isAutoCountered = sdk.to_int64(retval) == 2
+		if masterPlayerDamage and isFromEnemy then
+			if isHit then
+				if dodgeReady and (dodgeAction ~= nil) then
+					if counterPreMoveFunc ~= nil then
+						counterPreMoveFunc(masterPlayer, dodgeAction)
+					end
+					masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
+					if counterCallbackFunc ~= nil and dodgeAction == counterCallbackMove then
+						callbackFlag = true
+						return sdk.to_ptr(2)
+					end
+					if counterPostMoveFunc ~= nil then
+						counterPostMoveFunc(masterPlayer, masterPlayerBehaviorTree, dodgeAction)
+					end
+					return sdk.to_ptr(1)
 				end
-				masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
-				if counterCallbackFunc ~= nil and dodgeAction == counterCallbackMove then
-					callbackFlag = true
-					return sdk.to_ptr(2)
-				end
-				return sdk.to_ptr(1)
-			else
+			elseif isAutoCountered then
 				return retval
 			end
 			return retval
-		end	
+		end
 		return retval
 	end
 )
@@ -265,6 +286,7 @@ function(args)
 	counterCallbackFunc = actionMove.getCounterCallbackFuncs[weaponType]
 	counterCallbackMove = actionMove.CounterCallbackMove[weaponType]
 	counterPreMoveFunc = actionMove.CounterPreMoveFuncs[weaponType]
+	counterPostMoveFunc = actionMove.CounterPostMoveFuncs[weaponType]
 	if not GuiManager then
 		GuiManager = sdk.get_managed_singleton("snow.gui.GuiManager")
 	end
@@ -300,14 +322,14 @@ re.on_frame (
 
 re.on_frame (
 	function ()
-		if callbackReady then
-			callbackReady = false
+		if callbackPending then
+			callbackPending = false
 			counterCallbackFunc(masterPlayerBehaviorTree)
 		end
 
 		if callbackFlag then
 			callbackFlag = false
-			callbackReady = true
+			callbackPending = true
 		end
 
 	end
@@ -363,6 +385,15 @@ re.on_draw_ui(function()
         changed, DodgeConfig.foresight = imgui.checkbox("Auto-casting Foresight Slash", DodgeConfig.foresight)
 		imgui.spacing()
 		changed, DodgeConfig.iaiRelease = imgui.checkbox("Auto releasing Special Sheath", DodgeConfig.iaiRelease)
+		imgui.spacing()
+		changed, DodgeConfig.sacredSheath = imgui.checkbox("Auto releasing Sacred Sheath", DodgeConfig.sacredSheath)
+		imgui.indent(25)
+		imgui.begin_disabled(not DodgeConfig.sacredSheath)
+		imgui.text("if the player is within " )
+		imgui.same_line()
+		changed, DodgeConfig.sacredSheathDistance = imgui.slider_float(" feet to the lock-on target (Sacred Sheath)", DodgeConfig.sacredSheathDistance, 0, 20)
+		imgui.end_disabled()
+		imgui.unindent(25)
 		imgui.spacing()
 		changed, DodgeConfig.serenePose = imgui.checkbox("Auto-casting Serene Pose (only at Max Spirit Gauge)", DodgeConfig.serenePose)
 		imgui.indent(25)

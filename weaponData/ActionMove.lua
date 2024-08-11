@@ -1,4 +1,15 @@
 local actionMove = {}
+local sacredIaiContinuation = false
+local sacredIaiContinuationFrameCount = false
+local sacredIaiContinuationFrame = 0
+local sacredDodged = false
+local masterPlayerBehaviorTree
+local masterPlayer
+SacredCount = 0
+
+function actionMove.get_dodged()
+    return sacredDodged
+end
 
 function actionMove.init()
     GuardStateTag = sdk.find_type_definition("snow.player.ActStatus"):get_field("Guard"):get_data(nil)
@@ -45,6 +56,8 @@ function actionMove.init()
             ["down_sacred_iai"] = 1003674723,
             ["left_sacred_iai"] = 92514231,
             ["right_sacred_iai"] = 2730865880,
+            ["sacred_counter"] = 2605267967,
+            ["sacred_iai_release"] = 1714915764,
         },
         ["dualBlades"] = {
             ["normal"] = 1731229352,
@@ -151,6 +164,7 @@ function actionMove.init()
             [3756441082] = true, -- spirit blade
             -- [2346527105] = true, -- iai stage 1 (bell ring)
             -- [1498247531] = true, -- iai stage 2 (after ring)
+            [1714915764] = true, -- sacred iai release
         },
         ["dualBlades"] = {
             [3316282274] = true, -- vault shroud kijin
@@ -210,6 +224,8 @@ function actionMove.init()
             [1261730324] = true, -- serene pose activated
             -- [49282411] = true, -- missed foresight ends
             -- [662313942] = true, -- iai
+            [2345631380] = true, -- sacred iai relaase II
+            [2236209221] = true, -- sacred iai relaase III
         },
         ["dualBlades"] = {
             [2399642468] = true,  -- shrouded vault kijin, kijin_jyuu activated
@@ -274,7 +290,12 @@ function actionMove.init()
     }
 
     actionMove.CounterPreMoveFuncs = {
-        ["lightBowgun"] = actionMove.LightBowgunGounterPreMove,
+        ["lightBowgun"] = actionMove.LightBowgunCounterPreMove,
+        ["longSword"] = actionMove.LongSwordCounterPreMove
+    }
+
+    actionMove.CounterPostMoveFuncs = {
+        ["longSword"] = actionMove.LongSwordCounterPostMove
     }
 
     actionMove.weaponOffExceptions = {
@@ -395,6 +416,10 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer, distance)
         return actionMove.dodgeMove["longSword"]["iai_release"]
     end
     if SacredIai then
+        -- log.debug(tostring(DodgeConfig.sacredSheath)..": "..tostring(DodgeConfig.sacredSheathDistance).."/"..tostring(distance))
+        if DodgeConfig.sacredSheath and distance < tonumber(DodgeConfig.sacredSheathDistance) then
+            return actionMove.dodgeMove["longSword"]["sacred_iai_release"]
+        end
         local dir = actionMove.GetLstickDir(masterPlayer)
         -- log.debug("SacredIai" .. "dir: " .. dir)
         return actionMove.dodgeMove["longSword"][dir.."_sacred_iai"]
@@ -748,16 +773,18 @@ end
 function actionMove.ShortSowrdCounterCallback (masterPlayerBehaviorTree)
     -- log.debug("counter call back")
     masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["shortSword"]["shoryugeki_success"],nil,nil)
+    return 1
 end
 
 function actionMove.HammerCounterCallback (masterPlayerBehaviorTree)
     -- log.debug("counter call back")
     masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",actionMove.dodgeMove["hammer"]["water_strike_cont"],nil,nil)
+    return 1
 end
 
 ---- Counter Pre Moves
 
-function actionMove.LightBowgunGounterPreMove (masterPlayer, dodgeAction)
+function actionMove.LightBowgunCounterPreMove (masterPlayer, dodgeAction)
     if (dodgeAction == actionMove.dodgeMove["lightBowgun"]["normal"] 
         or  dodgeAction == actionMove.dodgeMove["lightBowgun"]["step_dodge"]) then
         -- and LightBowgunAiming then
@@ -767,6 +794,73 @@ function actionMove.LightBowgunGounterPreMove (masterPlayer, dodgeAction)
         playerDir:set_field("_targetAngleSpeed","3.0")
     end
 end
+
+function actionMove.LongSwordCounterPreMove (masterPlayer, dodgeAction)
+    if dodgeAction == actionMove.dodgeMove["longSword"]["sacred_iai_release"] 
+        or dodgeAction == actionMove.dodgeMove["longSword"]["up_sacred_iai"]
+        or dodgeAction == actionMove.dodgeMove["longSword"]["down_sacred_iai"]
+        or dodgeAction == actionMove.dodgeMove["longSword"]["left_sacred_iai"]
+        or dodgeAction == actionMove.dodgeMove["longSword"]["right_sacred_iai"]
+        then
+            local current_count = masterPlayer:get_field("_IaiCounterSubValue")
+            if current_count > SacredCount then
+                SacredCount = current_count
+            end
+            -- log.debug("cache count:" .. tostring(SacredCount))
+        end
+end
+
+---- Counter Post Moves
+
+function actionMove.LongSwordCounterPostMove (input_masterPlayer, input_masterPlayerBehaviorTree, dodgeAction)
+    if dodgeAction == actionMove.dodgeMove["longSword"]["sacred_iai_release"] then
+        if SacredCount > 1 then
+            sacredIaiContinuation = true
+            sacredDodged = false
+            masterPlayerBehaviorTree = input_masterPlayerBehaviorTree
+            masterPlayer = input_masterPlayer
+        end
+    elseif dodgeAction == actionMove.dodgeMove["longSword"]["up_sacred_iai"]
+    or dodgeAction == actionMove.dodgeMove["longSword"]["down_sacred_iai"]
+    or dodgeAction == actionMove.dodgeMove["longSword"]["left_sacred_iai"]
+    or dodgeAction == actionMove.dodgeMove["longSword"]["right_sacred_iai"] then
+        masterPlayer = input_masterPlayer
+        masterPlayer:set_field("_IaiCounterSubValue", SacredCount)
+        masterPlayer:set_IsIaiCounter(true)
+        sacredDodged = true
+    end
+    
+end
+
+---- Long Sword Sacred Sheath Speical Case
+
+re.on_frame (
+	function ()
+		if sacredIaiContinuation then
+            sacredIaiContinuation = false
+            sacredIaiContinuationFrameCount = true
+            sacredIaiContinuationFrame = 1
+        elseif sacredIaiContinuationFrameCount then
+            sacredIaiContinuationFrame = sacredIaiContinuationFrame + 1
+        end
+
+        if sacredIaiContinuationFrame >= 13 then
+            sacredIaiContinuationFrame = 0
+            sacredIaiContinuationFrameCount = false
+            local dodgeAction = 2236209221
+            if SacredCount == 2 then
+                dodgeAction = 2345631380
+            elseif SacredCount == 3 then
+                dodgeAction = 2236209221
+            end
+            SacredCount = 0
+            masterPlayer:set_field("_IaiCounterSubValue", SacredCount)
+            masterPlayerBehaviorTree:call("setCurrentNode(System.UInt64, System.UInt32, via.behaviortree.SetNodeInfo)",dodgeAction,nil,nil)
+        end
+
+	end
+)
+
 
 -- function actionMove.TestPreMove (masterPlayer, dodgeAction)
 --     local playerDir = masterPlayer:get_RefAngleCtrl()
