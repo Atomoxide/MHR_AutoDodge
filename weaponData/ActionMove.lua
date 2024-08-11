@@ -391,12 +391,12 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer, distance)
         end
     end
     if Iai and DodgeConfig.iaiRelease then
-        log.debug("Iai")
+        -- log.debug("Iai")
         return actionMove.dodgeMove["longSword"]["iai_release"]
     end
     if SacredIai then
         local dir = actionMove.GetLstickDir(masterPlayer)
-        log.debug("SacredIai" .. "dir: " .. dir)
+        -- log.debug("SacredIai" .. "dir: " .. dir)
         return actionMove.dodgeMove["longSword"][dir.."_sacred_iai"]
     end
     local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
