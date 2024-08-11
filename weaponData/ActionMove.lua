@@ -43,7 +43,7 @@ function actionMove.init()
             ["spirit_blade"] = 3756441082,
             ["up_sacred_iai"] = 3564270813,
             ["down_sacred_iai"] = 1003674723,
-            ["left_scared_iai"] = 92514231,
+            ["left_sacred_iai"] = 92514231,
             ["right_sacred_iai"] = 2730865880,
         },
         ["dualBlades"] = {
@@ -391,10 +391,12 @@ function actionMove.GetLongSwordDodgeMove (masterPlayer, distance)
         end
     end
     if Iai and DodgeConfig.iaiRelease then
+        log.debug("Iai")
         return actionMove.dodgeMove["longSword"]["iai_release"]
     end
     if SacredIai then
         local dir = actionMove.GetLstickDir(masterPlayer)
+        log.debug("SacredIai" .. "dir: " .. dir)
         return actionMove.dodgeMove["longSword"][dir.."_sacred_iai"]
     end
     local isAttack = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", AttackStateTag)
