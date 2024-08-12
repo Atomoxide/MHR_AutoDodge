@@ -302,6 +302,8 @@ function actionMove.init()
         [3550856967] = true, -- longSword iai
         [2346527105] = true, -- longSword iai
         [1498247531] = true, -- longSword iai
+        [1714446132] = true, -- longSword iai
+        [2072503206] = true, -- longSword iai
         [4092244120] = true, -- longSword sacred iai
         -- sacred iai dodge
         [3564270813] = true,

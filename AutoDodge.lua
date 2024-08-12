@@ -34,6 +34,7 @@ local function DefaultConfig()
 		enabled = true, -- general
 		rollDodge = true, 
 		weaponOffDodge = true,
+		forcedDodge = false,
 		shroudedVault = true, -- DB
 		shroudedVaultDistance = 4,
 		strongArmStance = true, -- GS
@@ -78,6 +79,7 @@ local function LoadAutoDodgeConfig()
             DodgeConfig.enabled = file.enabled
 			DodgeConfig.rollDodge = file.rollDodge
 			DodgeConfig.weaponOffDodge = file.weaponOffDodge
+			DodgeConfig.forcedDodge = file.forcedDodge
             popWindow = file.popWindow
 			DodgeConfig.shroudedVault = file.shroudedVault
 			DodgeConfig.shroudedVaultDistance = file.shroudedVaultDistance
@@ -121,6 +123,7 @@ local function SaveAutoDodgeConfig()
         enabled = DodgeConfig.enabled,
 		rollDodge = DodgeConfig.rollDodge,
 		weaponOffDodge = DodgeConfig.weaponOffDodge,
+		forcedDodge = DodgeConfig.forcedDodge,
         shroudedVault = DodgeConfig.shroudedVault,
 		shroudedVaultDistance = DodgeConfig.shroudedVaultDistance,
 		adamantChargedSlash = DodgeConfig.strongArmStance,
@@ -188,7 +191,10 @@ function(args)
 	local isDamage = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", damageStateTag)
 	local isRide = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", rideStateTag)
 	-- local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
-	local dodgeDisabled = isJump or isWireJump or isEscape or isDamage or isRide
+	local dodgeDisabled = isJump or isWireJump or isRide
+	if not DodgeConfig.forcedDodge then
+		dodgeDisabled = dodgeDisabled or isEscape or isDamage
+	end
 	-- log.debug(tostring(dodgeDisabled))
 
 	---- check is weapon drawn
@@ -383,6 +389,8 @@ re.on_draw_ui(function()
 		changed, DodgeConfig.rollDodge = imgui.checkbox("Auto weapon on roll-dodging", DodgeConfig.rollDodge)
 		imgui.spacing()
 		changed, DodgeConfig.weaponOffDodge = imgui.checkbox("Auto weapon off roll-dodging", DodgeConfig.weaponOffDodge)
+		imgui.spacing()
+		changed, DodgeConfig.forcedDodge = imgui.checkbox("Enable forced roll-dodging (VERY OP)", DodgeConfig.forcedDodge)
         imgui.unindent(25)
 		imgui.spacing()
 
