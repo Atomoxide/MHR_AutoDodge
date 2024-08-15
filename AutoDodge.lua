@@ -193,7 +193,7 @@ function(args)
 	-- local isGuard = masterPlayer:call("isActionStatusTag(snow.player.ActStatus)", guardStateTag)
 	local dodgeDisabled = isJump or isWireJump or isRide
 	if not DodgeConfig.forcedDodge then
-		dodgeDisabled = dodgeDisabled or isEscape or isDamage
+		dodgeDisabled = dodgeDisabled or isEscape
 	end
 	-- log.debug(tostring(dodgeDisabled))
 
