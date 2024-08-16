@@ -197,6 +197,7 @@ function actionMove.init()
             -- [1769663665] = true, -- axe element counter start
             -- [1864735059] = true, -- sword element counter start
             [1322606337] = true, -- element counter slash
+            [1503956838] = true, -- element counter success
         },
         ["chargeAxe"] = {
             [2180283493] = true, -- silk normal guard
