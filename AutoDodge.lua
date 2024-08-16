@@ -364,20 +364,17 @@ end
 
 -- REFramework UI
 re.on_draw_ui(function()
-    -- if imgui.button("Toggle Auto Dodge Config GUI") then
-    --     popWindow = not popWindow
-    --     SaveAutoDodgeConfig()
-    -- end
-    -- if popWindow then
+    if imgui.button("Toggle Auto Dodge Config GUI") then
+        popWindow = not popWindow
+        SaveAutoDodgeConfig()
+    end
+    if popWindow then
         
-        -- imgui.push_style_var(11, 5.0) -- Rounded elements
-        -- imgui.push_style_var(2, 10.0) -- Window Padding
+        imgui.push_style_var(11, 5.0) -- Rounded elements
+        imgui.push_style_var(2, 10.0) -- Window Padding
 
-        -- alreadyOpen = true
-        -- popWindow = imgui.begin_window("Auto Dodge Config", popWindow, 64)
-
-		if imgui.collapsing_header("Auto Dodge GUI") then
-		
+        alreadyOpen = true
+        popWindow = imgui.begin_window("Auto Dodge Config", popWindow, 64)
 		
 		local changed = false
 
@@ -567,5 +564,8 @@ re.on_draw_ui(function()
         imgui.spacing()
         imgui.pop_style_var(2)
         imgui.end_window()
-	end
+    elseif alreadyOpen then
+        alreadyOpen = false
+        SaveAutoDodgeConfig()
+    end
 end)
