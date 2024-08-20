@@ -67,6 +67,7 @@ local function DefaultConfig()
 		spiralThrustDistance = 7,
 		anchorRage = true, -- LA
 		dodgeBolt = true, -- BW
+		waterStrike = true, -- HM
 	}
 end
 
@@ -114,6 +115,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.spiralThrustDistance = file.spiralThrustDistance
 			DodgeConfig.anchorRage = file.anchorRage
 			DodgeConfig.dodgeBolt = file.dodgeBolt
+			DodgeConfig.waterStrike = file.waterStrike
         end
     end
 end
@@ -158,6 +160,7 @@ local function SaveAutoDodgeConfig()
 		spiralThrustDistance = DodgeConfig.spiralThrustDistance,
 		anchorRage = DodgeConfig.anchorRage,
 		dodgeBolt = DodgeConfig.dodgeBolt,
+		waterStrike = DodgeConfig.waterStrike
     })
 end
 
@@ -312,6 +315,12 @@ function(args)
 	counterCallbackMove = actionMove.CounterCallbackMove[weaponType]
 	counterPreMoveFunc = actionMove.CounterPreMoveFuncs[weaponType]
 	counterPostMoveFunc = actionMove.CounterPostMoveFuncs[weaponType]
+	if weaponType == "hammer" and DodgeConfig.waterStrike then
+		local masterPlayerFsm2 = masterPlayerGameObject:call("getComponent(System.Type)", sdk.typeof("via.motion.MotionFsm2"))
+		local masterPlayerCtrlTreeObj = masterPlayerFsm2:call("getLayer", 0):get_tree_object()
+		local waterStrikeAction = masterPlayerCtrlTreeObj:get_actions()[9250]
+		waterStrikeAction:set_field("_StartFrame", 0)
+	end
 	if not GuiManager then
 		GuiManager = sdk.get_managed_singleton("snow.gui.GuiManager")
 	end
@@ -521,6 +530,13 @@ re.on_draw_ui(function()
 		imgui.unindent(25)
 		imgui.spacing()
 		changed, DodgeConfig.guardSlash = imgui.checkbox("Auto-casting Guard Slash (when player is guarding)", DodgeConfig.guardSlash)
+        imgui.unindent(25)
+		imgui.spacing()
+
+		imgui.text("Hammer:")
+		imgui.spacing()
+		imgui.indent(25)
+        changed, DodgeConfig.waterStrike = imgui.checkbox("Auto-casting Water Strike (warning: this will tweak water strike's starting frame)", DodgeConfig.waterStrike)
         imgui.unindent(25)
 		imgui.spacing()
 

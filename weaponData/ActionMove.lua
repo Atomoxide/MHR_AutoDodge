@@ -262,7 +262,7 @@ function actionMove.init()
         ["horn"] = actionMove.GetGeneralDodgeMove,
         ["heavyBowgun"] = actionMove.GetHeavyBowgunDodgeMove,
         ["lightBowgun"] = actionMove.GetLightBowgunDodgeMove,
-        ["hammer"] = actionMove.GetGeneralDodgeMove, -- wip
+        ["hammer"] = actionMove.GetHammerDodgeMove, -- wip
         ["shortSword"] = actionMove.GetShortSwordDodgeMove,
         ["insectGlaive"] = actionMove.GetGeneralDodgeMove,
         ["slashAxe"] = actionMove.GetSlashAxeDodgeMove,
@@ -283,12 +283,10 @@ function actionMove.init()
 
     actionMove.getCounterCallbackFuncs = {
         ["shortSword"] = actionMove.ShortSowrdCounterCallback,
-        -- ["hammer"] = actionMove.HammerCounterCallback, -- wip
     }
 
     actionMove.CounterCallbackMove = {
         ["shortSword"] = actionMove.dodgeMove["shortSword"]["shoryugeki"],
-        ["hammer"] = actionMove.dodgeMove["hammer"]["water_strike"]
     }
 
     actionMove.CounterPreMoveFuncs = {
@@ -694,6 +692,7 @@ end
 function actionMove.GetHammerDodgeMove (masterPlayer, distance)
     local replaceSkillSet = masterPlayer:get_field("_ReplaceAtkMysetHolder")
     local waterStrikeEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 0) == 1 
+            and DodgeConfig.waterStrike
     if waterStrikeEquipped then
         return actionMove.dodgeMove["hammer"]["water_strike"]
     end
