@@ -54,6 +54,7 @@ local function DefaultConfig()
 		sacredCounter = true,
 		counterPeakPerforamce = true, -- CB
 		autoGuardPoints = true, -- CB
+		readyStand = false, -- CB
 		elementalCounter = true, -- SA
 		windmill = true, -- SS
 		windmillDistance = 4,
@@ -100,6 +101,7 @@ local function LoadAutoDodgeConfig()
 			DodgeConfig.sacredCounter = file.sacredCounter
 			DodgeConfig.counterPeakPerforamce = file.counterPeakPerforamce
 			DodgeConfig.autoGuardPoints = file.autoGuardPoints
+			DodgeConfig.readyStand = file.readyStand
 			DodgeConfig.elementalCounter = file.elementalCounter
 			DodgeConfig.windmill = file.windmill
 			DodgeConfig.windmillDistance = file.windmillDistance
@@ -143,6 +145,7 @@ local function SaveAutoDodgeConfig()
 		sacredCounter = DodgeConfig.sacredCounter,
 		counterPeakPerforamce = DodgeConfig.counterPeakPerforamce,
 		autoGuardPoints = DodgeConfig.autoGuardPoints,
+		readyStand = DodgeConfig.readyStand,
 		elementalCounter = DodgeConfig.elementalCounter,
 		windmill = DodgeConfig.windmill,
 		windmillDistance = DodgeConfig.windmillDistance,
@@ -374,7 +377,7 @@ re.on_draw_ui(function()
         imgui.push_style_var(2, 10.0) -- Window Padding
 
         alreadyOpen = true
-        popWindow = imgui.begin_window("Auto Dodge Config", popWindow, 64)
+        popWindow = imgui.begin_window("Auto Dodge Config", popWindow, 16)
 		
 		local changed = false
 
@@ -484,6 +487,8 @@ re.on_draw_ui(function()
         changed, DodgeConfig.counterPeakPerforamce = imgui.checkbox("Auto-casting Counter Peak Performance", DodgeConfig.counterPeakPerforamce)
 		imgui.spacing()
 		changed, DodgeConfig.autoGuardPoints = imgui.checkbox("Auto morph to gain Guard Points (when player is guarding under sword mode)", DodgeConfig.autoGuardPoints)
+        imgui.spacing()
+		changed, DodgeConfig.readyStand = imgui.checkbox("Auto-casting Ready Stand instead of roll dodge under axe mode", DodgeConfig.readyStand)
         imgui.unindent(25)
 		imgui.spacing()
 

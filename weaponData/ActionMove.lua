@@ -123,6 +123,7 @@ function actionMove.init()
             ["axe_counter"] = 1460612556,
             ["normal_morph_slash"] = 3224744091,
             ["counter_morph_slash"] = 3760447530,
+            ["ready_stand"] = 268149429,
         },
         ["lance"] = {
             ["normal"] = 1731229352,
@@ -488,11 +489,12 @@ function actionMove.GetHeavyBowgunDodgeMove (masterPlayer, distance)
     local replaceSkillData4 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4)
     local replaceSkillData1 = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1)
     local wireNum = masterPlayer:getUsableHunterWireNum()
+    local counterBuffTime = masterPlayer:get_field("_ReduseChargeTimer")
     if replaceSkillData4 == 0 and replaceSkillData1 == 0 and wireNum >= 2 and DodgeConfig.counterShot then
         return actionMove.dodgeMove["heavyBowgun"]["counter_shot"]
     end
 
-    if replaceSkillData1 == 1 and replaceSkillData4 == 0 and wireNum >= 1 and DodgeConfig.counterCharge then
+    if replaceSkillData1 == 1 and replaceSkillData4 == 0 and wireNum >= 1 and DodgeConfig.counterCharge and counterBuffTime < 1.0 then
         return actionMove.dodgeMove["heavyBowgun"]["counter_charge"]
     end
     if not DodgeConfig.rollDodge then
@@ -575,6 +577,9 @@ function actionMove.GetChargeAxeDodgeMove (masterPlayer, distance)
             and wireNum >= 1
             and DodgeConfig.counterPeakPerforamce
     local counterMorphEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 1) == 1
+    local readyStandEquipped = replaceSkillSet:call("getReplaceAtkTypeFromMyset", 4) == 1
+            and wireNum >= 1
+            and DodgeConfig.readyStand
 	axe = sdk.find_type_definition("snow.player.ChargeAxe.WeaponMode"):get_field("Axe"):get_data(nil)
     state = masterPlayer:call("get_Mode")
     if isGuard and not DodgeConfig.autoGuardPoints then
@@ -589,6 +594,9 @@ function actionMove.GetChargeAxeDodgeMove (masterPlayer, distance)
     if state == axe then
         if counterEquipped then
             return actionMove.dodgeMove["chargeAxe"]["axe_counter"]
+        end
+        if readyStandEquipped then
+            return actionMove.dodgeMove["chargeAxe"]["ready_stand"]
         end
         if DodgeConfig.rollDodge then
             return actionMove.dodgeMove["chargeAxe"]["axe"]
